@@ -16,8 +16,6 @@ METRICS_TO_TRACK = [
     "exact_match_get-answer",
 ]
 
-GROUP_DATASETS = ["truthfulqa", "veritasqa", "basque-glue"]
-
 TASK_SCHEME = {
     # ca
     "belebele_cat_Latn": {
