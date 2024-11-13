@@ -16,39 +16,6 @@ METRICS_TO_TRACK = [
     "exact_match_get-answer",
 ]
 
-EXCLUDED_DATASETS = [
-    "paws_en",
-    "phrases_va",
-    "phases_ca-va",
-    "phases_va-ca",
-    "phases_va-es",
-    "phases_es-va",
-    "mgsm_direct_en",
-    "mgsm_direct_es",
-    "mgsm_native_cot_eu",
-    "cabreu",
-    "phases_va",
-    "bec2016eu",
-    "bhtc_v2",
-    "epec_koref_bin",
-    "vaxx_stance",
-    "wiceu",
-    "truthfulqa",
-    "truthfulqa_gl",
-    "veritasqa",
-    "basque-glue",
-    "iberobench_en",
-    "catalan_bench",
-    "spanish_bench",
-    "galician_bench",
-    "basque_bench",
-    "dbpedia",
-    "portuguese_bench",
-    "phases_es",
-    "phases_ca-es",
-    "phases_es-ca",
-]  # ['veritas', 'truthful', 'mgsm']
-
 GROUP_DATASETS = ["truthfulqa", "veritasqa", "basque-glue"]
 
 TASK_SCHEME = {
@@ -242,12 +209,7 @@ TASK_SCHEME = {
         "category": "Translation (subtask)",
         "language": "ca",
     },
-    "cabreu": {
-        "num_labels": "gen_task",
-        "metric": "bleu",
-        "category": "Summarization",
-        "language": "ca",
-    },
+    # "cabreu": {"num_labels": "gen_task", "metric": "bleu", "category": "Summarization", "language": "ca"},
     "cabreu_extractive": {
         "num_labels": "gen_task",
         "metric": "rouge1",
@@ -290,7 +252,12 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "ca",
     },
-    # "phases_va": {"num_labels": "gen_task", "metric": "bleu", "category": "Translation - Adaptation", "language": "ca"},
+    "phrases_va": {
+        "num_labels": "gen_task",
+        "metric": "bleu",
+        "category": "Translation - Adaptation",
+        "language": "ca",
+    },
     "phrases_ca-va": {
         "num_labels": "gen_task",
         "metric": "bleu",
@@ -732,7 +699,12 @@ TASK_SCHEME = {
         "category": "Math",
         "language": "eu",
     },
-    # "mgsm_native_cot_eu": {"num_labels": "gen_task", "metric": "exact_match,get-answer", "category": "Math (subtask)", "language": "eu"},
+    "mgsm_native_cot_eu": {
+        "num_labels": "gen_task",
+        "metric": "exact_match,get-answer",
+        "category": "Math (subtask)",
+        "language": "eu",
+    },
     "flores_eu": {
         "num_labels": "gen_task",
         "metric": "bleu",
@@ -1097,7 +1069,7 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "en",
     },
-    "paws_en_corrected": {
+    "paws_en": {
         "num_labels": "2",
         "metric": "acc",
         "category": "Paraphrasing",
@@ -1127,7 +1099,7 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "en",
     },
-    "mgsm_direct_en_corrected": {
+    "mgsm_direct_en": {
         "num_labels": "gen_task",
         "metric": "exact match",
         "category": "Math",
@@ -1355,7 +1327,7 @@ def log_to_mlflow(
 
     task_results = results.get("results")
     for task in task_results.keys():
-        if task not in EXCLUDED_DATASETS and task in TASK_SCHEME.keys():
+        if task in TASK_SCHEME.keys():
             with mlflow.start_run(run_name=task):
                 num_labels, lang, category, metric, random = get_task_parameters(task)
                 mlflow.log_param("num_labels", num_labels)
@@ -1387,4 +1359,3 @@ def log_to_mlflow(
                             )
                             mlflow.log_metric(f"normalized_score", normalized_score)
                             mlflow.log_param("model", model_name)
-
