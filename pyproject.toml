@@ -19,35 +19,13 @@ classifiers = [
 requires-python = ">=3.8"
 license = { "text" = "MIT" }
 dependencies = [
-    "accelerate>=0.26.0",
-    "evaluate",
-    "datasets>=2.16.0",
-    "evaluate>=0.4.0",
-    "jsonlines",
-    "numexpr",
-    "peft>=0.2.0",
-    "pybind11>=2.6.2",
-    "pytablewriter",
-    "rouge-score>=0.0.4",
-    "sacrebleu>=1.5.0",
-    "scikit-learn>=0.24.1",
-    "sqlitedict",
-    "torch>=1.8",
-    "tqdm-multiprocess",
-    "transformers>=4.1",
-    "zstandard",
-    "dill",
-    "word2number",
-    "more_itertools",
-    "fairseq>=0.12.2",
-    "ctranslate2>=4.3.1",
     "streamlit>=1.37.1",
-    "unbabel-comet>=2.2.2",
-    "bleurt-pytorch>=0.0.1",
     "st-annotated-text",
     "plotly",
-    "rouge-score>=0.1.2",
-    "scipy>=1.12.0"
+    "pandas",
+    "seaborn",
+    "numpy",
+    "matplotlib"
 ]
 
 [tool.setuptools.packages.find]
