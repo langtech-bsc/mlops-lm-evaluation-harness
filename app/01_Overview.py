@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from utils import *
 
-DATA_PATH_csv = './pages/results_summary/results_summary.csv'
+DATA_PATH_csv = '/mount/src/mt-evaluation/app/pages/results_summary/results_summary.csv'
 
 def main():
     st.set_page_config(page_title="Overview", page_icon="🔎", layout="wide")
