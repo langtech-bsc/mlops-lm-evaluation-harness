@@ -5,8 +5,8 @@ import os
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-DATA_PATH_csv = './results_summary/results_summary.csv'
-DATA_PATH = './results'
+DATA_PATH_csv = '/mount/src/mt-evaluation/app/pages/results_summary/results_summary.csv'
+DATA_PATH = '/mount/src/mt-evaluation/app/pages/results'
 
 
 def main():

@@ -10,8 +10,8 @@ from annotated_text import annotated_text
 from utils import *
 from bootstraping import *
 
-DATA_PATH_csv = './results_summary/results_summary.csv'
-DATA_PATH = './results'
+DATA_PATH_csv = '/mount/src/mt-evaluation/app/pages/results_summary/results_summary.csv'
+DATA_PATH = '/mount/src/mt-evaluation/app/pages/results'
 
 INVALID_LOW = -1000
 INVALID_HIGH = 1000
