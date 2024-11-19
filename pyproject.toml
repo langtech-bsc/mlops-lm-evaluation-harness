@@ -25,7 +25,8 @@ dependencies = [
     "pandas",
     "seaborn",
     "numpy",
-    "matplotlib"
+    "matplotlib",
+    "sacrebleu"
 ]
 
 [tool.setuptools.packages.find]
