@@ -140,3 +140,11 @@ def rouge1_agg(items):
     preds = list(zip(*items))[1]
     rouge_scorer = evaluate.load("rouge")
     return rouge_scorer.compute(predictions=preds, references=refs)["rouge1"]
+
+def map_label_to_index(doc):
+    if doc["label"] == "No Parafrasis":
+        return 0
+    elif doc["label"] == "Parafrasis":
+        return 1
+    else:
+        raise ValueError(f"Unexpected label: {doc['label']}")
