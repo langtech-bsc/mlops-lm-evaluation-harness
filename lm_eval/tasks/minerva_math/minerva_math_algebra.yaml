@@ -1,4 +1,4 @@
-tag:
+group:
   - math_word_problems
 task: minerva_math_algebra
 dataset_path: EleutherAI/hendrycks_math

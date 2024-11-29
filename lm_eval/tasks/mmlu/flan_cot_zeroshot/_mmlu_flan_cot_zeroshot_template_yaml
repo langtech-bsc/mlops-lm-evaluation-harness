@@ -12,7 +12,7 @@ filter_list:
       - function: "take_first"
   - name: "flexible-extract"
     filter:
-      - function: "multi_choice_regex"
+      - function: !function utils.MultiChoiceRegexFilter
         group_select: -1
         ignore_case: true
         ignore_punctuation: true

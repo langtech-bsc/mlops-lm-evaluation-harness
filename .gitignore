@@ -1,14 +1,12 @@
 env
 *.pyc
 output/
-data/
 lm_cache
 .idea
 build
 dist
 *.egg-info
 venv
-.venv/
 .vscode/
 temp
 __pycache__

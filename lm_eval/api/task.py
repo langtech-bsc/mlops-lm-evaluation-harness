@@ -1,5 +1,6 @@
 import abc
 import ast
+import os
 import logging
 import random
 import re
@@ -39,7 +40,7 @@ from lm_eval.api.registry import (
 from lm_eval.caching.cache import load_from_cache, save_to_cache
 from lm_eval.filters import build_filter_ensemble
 from lm_eval.prompts import get_prompt
-
+from lm_eval.api.dataset_paths import dataset_paths
 
 ALL_OUTPUT_TYPES = [
     "loglikelihood",
@@ -57,6 +58,7 @@ class TaskConfig(dict):
     task: Optional[str] = None
     task_alias: Optional[str] = None
     tag: Optional[Union[str, list]] = None
+    group: Optional[Union[str, list]] = None
     # HF dataset options.
     # which dataset to use,
     # and what splits for what purpose
@@ -67,7 +69,7 @@ class TaskConfig(dict):
     validation_split: Optional[str] = None
     test_split: Optional[str] = None
     fewshot_split: Optional[str] = (
-        None  # TODO: assert that this not None if num_fewshot > 0. (?) assert if this is same split as one evaluating (?)
+        None  # TODO: assert that this not None if num_fewshot > 0. (?) assert if this is same split as one evaling (?)
     )
     # formatting / prompting options.
     # see docs/advanced_task_guide.md for more info
@@ -97,6 +99,18 @@ class TaskConfig(dict):
     )
 
     def __post_init__(self) -> None:
+        if self.group is not None:
+            eval_logger.warning(
+                "A task YAML file was found to contain a `group` key. Groups which provide aggregate scores over several subtasks now require a separate config file--if not aggregating, you may want to use the `tag` config option instead within your config. Setting `group` within a TaskConfig will be deprecated in v0.4.4. Please see https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/task_guide.md for more information."
+            )
+
+            if self.tag is None:
+                self.tag = self.group
+            else:
+                raise ValueError(
+                    "Got both a `group` and `tag` entry within a TaskConfig. Please use one or the other--`group` values will be deprecated in v0.4.4."
+                )
+
         if self.generation_kwargs is not None:
             if self.output_type != "generate_until":
                 eval_logger.warning(
@@ -263,8 +277,21 @@ class Task(abc.ABC):
             - `datasets.DownloadMode.FORCE_REDOWNLOAD`
                 Fresh download and fresh dataset.
         """
+
+        if self.DATASET_PATH in dataset_paths:                                                          # added by BSC
+            current_directory = os.getcwd()								                                # added by BSC
+            # move to lm-evaluation-harness path							                            # added by BSC
+            while os.path.basename(current_directory) != "mt-evaluation":			            # added by BSC
+                current_directory = os.path.dirname(current_directory)					                # added by BSC
+            relative_data_path = dataset_paths[self.DATASET_PATH]                                       # added by BSC
+            path=os.path.join(current_directory, relative_data_path)                                    # added by BSC
+            print(f"Dataset loaded from local path: {path}")                                            # added by BSC
+        else:                                                                                           # added by BSC
+            path=self.DATASET_PATH                                                                      # added by BSC
+
+        
         self.dataset = datasets.load_dataset(
-            path=self.DATASET_PATH,
+            path=path,
             name=self.DATASET_NAME,
             data_dir=data_dir,
             cache_dir=cache_dir,
@@ -449,7 +476,6 @@ class Task(abc.ABC):
                 doc=doc,
                 ctx=fewshot_ctx,
                 metadata=(self.config["task"], doc_id, self.config.repeats),
-                apply_chat_template=apply_chat_template,
             )
 
             if not isinstance(inst, list):
@@ -921,13 +947,14 @@ class ConfigurableTask(Task):
                     eval_logger.debug(
                         f'Both target_delimiter "{self.config.target_delimiter}" and target choice: "{choice}" do not have whitespace, ignore if the language you are evaluating on does not require/use whitespace'
                     )
-
+    """
     def download(self, dataset_kwargs: Optional[Dict[str, Any]] = None) -> None:
         self.dataset = datasets.load_dataset(
             path=self.DATASET_PATH,
             name=self.DATASET_NAME,
             **dataset_kwargs if dataset_kwargs is not None else {},
         )
+    """
 
     def has_training_docs(self) -> bool:
         if self.config.training_split is not None:
@@ -1302,8 +1329,6 @@ class ConfigurableTask(Task):
     def construct_requests(
         self, doc: dict, ctx: str, **kwargs
     ) -> Union[List[Instance], Instance]:
-        apply_chat_template = kwargs.pop("apply_chat_template", False)
-
         aux_arguments = None
 
         if self.OUTPUT_TYPE == "loglikelihood":
@@ -1313,8 +1338,6 @@ class ConfigurableTask(Task):
         elif self.OUTPUT_TYPE == "multiple_choice":
             choices = self.doc_to_choice(doc)
             target_delimiter = self.config.target_delimiter
-            if apply_chat_template:
-                target_delimiter = ""
             if self.multiple_input:
                 # If there are multiple inputs, choices are placed in the ctx
                 cont = self.doc_to_target(doc)
@@ -1503,7 +1526,7 @@ class ConfigurableTask(Task):
             # we expect multiple_targets to be a list.
             elif self.multiple_target:
                 gold = list(gold)
-            elif type(gold) is not type(result):
+            elif type(gold) is type(result):
                 # cast gold to the same type as result
                 gold = type(result)(gold)
 

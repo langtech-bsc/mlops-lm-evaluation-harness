@@ -38,6 +38,8 @@ from lm_eval.utils import (
     simple_parse_args_string,
 )
 
+from lm_eval.api.mt_task import MTask
+
 
 if TYPE_CHECKING:
     from lm_eval.api.model import LM
@@ -67,6 +69,7 @@ def simple_evaluate(
     apply_chat_template: Union[bool, str] = False,
     fewshot_as_multiturn: bool = False,
     gen_kwargs: Optional[str] = None,
+    mt_kwargs: Optional[str] = None,
     task_manager: Optional[TaskManager] = None,
     verbosity: str = "INFO",
     predict_only: bool = False,
@@ -122,6 +125,9 @@ def simple_evaluate(
     :param gen_kwargs: str
         String arguments for model generation
         Ignored for all tasks with loglikelihood output_type
+    :param mt_kwargs: str
+        String arguments for mt tasks
+        Ignored for all tasks with loglikelihood output_type
     :param predict_only: bool
         If true only model outputs will be generated and returned. Metrics will not be evaluated
     :param random_seed: int
@@ -157,9 +163,6 @@ def simple_evaluate(
         seed_message.append(f"Setting torch manual seed to {torch_random_seed}")
         torch.manual_seed(torch_random_seed)
 
-    if fewshot_random_seed is not None:
-        seed_message.append(f"Setting fewshot manual seed to {fewshot_random_seed}")
-
     if seed_message:
         eval_logger.info(" | ".join(seed_message))
 
@@ -178,6 +181,14 @@ def simple_evaluate(
         )
         if gen_kwargs == "":
             gen_kwargs = None
+    
+    if mt_kwargs is not None:
+        mt_kwargs = simple_parse_args_string(mt_kwargs)
+        eval_logger.warning(
+            "mt_kwargs specified through cli, these settings will format the prompt sentence."
+        )
+        if mt_kwargs == "":
+            mt_kwargs = None
 
     if isinstance(model, str):
         if model_args is None:
@@ -279,6 +290,9 @@ def simple_evaluate(
                         task_obj.set_config(key="num_fewshot", value=0)
                 # fewshot_random_seed set for tasks, even with a default num_fewshot (e.g. in the YAML file)
                 task_obj.set_fewshot_seed(seed=fewshot_random_seed)
+                eval_logger.info(
+                    f"Setting fewshot random generator seed to {fewshot_random_seed}"
+                )
 
                 adjusted_task_dict[task_name] = task_obj
 
@@ -294,9 +308,7 @@ def simple_evaluate(
             model_source=model,
             model_args=model_args,
             system_instruction=system_instruction,
-            chat_template=lm.chat_template(apply_chat_template)
-            if apply_chat_template
-            else None,
+            chat_template=lm.chat_template(apply_chat_template),
             fewshot_as_multiturn=fewshot_as_multiturn,
         )
 
@@ -313,6 +325,7 @@ def simple_evaluate(
         apply_chat_template=apply_chat_template,
         fewshot_as_multiturn=fewshot_as_multiturn,
         verbosity=verbosity,
+        mt_kwargs=mt_kwargs
     )
 
     if lm.rank == 0:
@@ -372,6 +385,7 @@ def evaluate(
     apply_chat_template: Union[bool, str] = False,
     fewshot_as_multiturn: bool = False,
     verbosity: str = "INFO",
+    mt_kwargs = None
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -401,11 +415,6 @@ def evaluate(
     """
 
     eval_logger.setLevel(getattr(logging, f"{verbosity}"))
-
-    if apply_chat_template:
-        eval_logger.warning(
-            "Chat template formatting change affects loglikelihood and multiple-choice tasks. See docs/chat-template-readme.md for details."
-        )
 
     # tracks all Instances/requests a model must generate output on.
     requests = defaultdict(list)
@@ -440,30 +449,50 @@ def evaluate(
             )
     # end multimodality validation check
 
-    # Cache the limit arg.
-    limit_arg = limit
-    limits = []
     for task_output in eval_tasks:
         task: Task = task_output.task
 
-        limit = get_sample_size(task, limit_arg)
-        limits.append(limit)
-        task.build_all_requests(
-            limit=limit,
-            rank=lm.rank,
-            world_size=lm.world_size,
-            cache_requests=cache_requests,
-            rewrite_requests_cache=rewrite_requests_cache,
-            system_instruction=system_instruction,
-            apply_chat_template=bool(apply_chat_template),
-            fewshot_as_multiturn=fewshot_as_multiturn,
-            chat_template=getattr(lm, "apply_chat_template")
-            if apply_chat_template
-            else None,
-            tokenizer_name=getattr(lm, "tokenizer_name", "")
-            if apply_chat_template
-            else "",
-        )
+        limit = get_sample_size(task, limit)
+        if isinstance(task, MTask):
+            eval_logger.warning('MTask detected')
+
+            task.build_all_requests(
+                limit=limit,
+                rank=lm.rank,
+                world_size=lm.world_size,
+                cache_requests=cache_requests,
+                rewrite_requests_cache=rewrite_requests_cache,
+                system_instruction=system_instruction,
+                apply_chat_template=bool(apply_chat_template),
+                fewshot_as_multiturn=fewshot_as_multiturn,
+                chat_template=getattr(lm, "apply_chat_template")
+                if apply_chat_template
+                else None,
+                tokenizer_name=getattr(lm, "tokenizer_name", "")
+                if apply_chat_template
+                else "",
+                mt_kwargs=mt_kwargs
+            )
+
+        else:
+
+            task.build_all_requests(
+                limit=limit,
+                rank=lm.rank,
+                world_size=lm.world_size,
+                cache_requests=cache_requests,
+                rewrite_requests_cache=rewrite_requests_cache,
+                system_instruction=system_instruction,
+                apply_chat_template=bool(apply_chat_template),
+                fewshot_as_multiturn=fewshot_as_multiturn,
+                chat_template=getattr(lm, "apply_chat_template")
+                if apply_chat_template
+                else None,
+                tokenizer_name=getattr(lm, "tokenizer_name", "")
+                if apply_chat_template
+                else "",
+            )
+
         eval_logger.debug(
             f"Task: {task_output.task_name}; number of requests on this rank: {len(task.instances)}"
         )
@@ -517,7 +546,7 @@ def evaluate(
     WORLD_SIZE = lm.world_size
     ### Postprocess outputs ###
     # TODO: del model here, maybe (idea: allow user to specify device of e.g. reward model separately)
-    for task_output, limit in zip(eval_tasks, limits):
+    for task_output in eval_tasks:
         task = task_output.task
         task.apply_filters()
 
@@ -666,7 +695,7 @@ def evaluate(
                         len(task_output.task.eval_docs),
                     ),
                 }
-                for task_output, limit in zip(eval_tasks, limits)
+                for task_output in eval_tasks
             },
         }
         if log_samples:
