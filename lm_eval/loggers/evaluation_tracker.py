@@ -290,7 +290,7 @@ class EvaluationTracker:
                 path.mkdir(parents=True, exist_ok=True)
                 
                 self.date_id = datetime.now().isoformat().replace(":", "-")
-                file_results_samples = directory_path.joinpath(
+                file_results_samples = path.joinpath(
                     f"samples_{task_name}_{self.date_id}.jsonl"
                 )
 
