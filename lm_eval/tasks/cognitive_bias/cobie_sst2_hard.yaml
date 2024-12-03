@@ -1,0 +1,12 @@
+task: cobie_sst2_hard
+dataset_path: /gpfs/projects/bsc88/text/bias/cobie/modified_datasets/sst2/cobie_sst2.py
+dataset_name: cobie_sst2_hard
+output_type: multiple_choice
+training_split: null
+validation_split: null
+test_split: train
+doc_to_text: "{{few_shot_hard_string}}Review: {{sentence}}\nSentiment:"
+doc_to_target: label
+doc_to_choice: ["negative", "positive", "neutral"]
+metric_list:
+  - metric: acc

@@ -1,0 +1,3 @@
+include: _cobie_arc_4choices.yaml
+task: cobie_arc_challenge_4choices
+dataset_name: cobie_arc_challenge_4choices

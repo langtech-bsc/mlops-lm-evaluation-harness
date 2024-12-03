@@ -1,0 +1,15 @@
+dataset_path: /gpfs/projects/bsc88/text/bias/cobie/modified_datasets/ARC/cobie_arc_4choices.py
+output_type: multiple_choice
+training_split: null
+validation_split: null
+test_split: train
+doc_to_text: "Question: {{question}}\nPossible answers: {{choices.text[0]}}, {{choices.text[1]}}, {{choices.text[2]}}, {{choices.text[3]}}.\nAnswer:"
+doc_to_target: "{{choices.label.index(answerKey)}}"
+doc_to_choice: "{{choices.text}}"
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: acc_norm
+    aggregation: mean
+    higher_is_better: true

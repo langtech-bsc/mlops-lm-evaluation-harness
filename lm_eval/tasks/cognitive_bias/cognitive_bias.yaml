@@ -1,0 +1,8 @@
+group: cognitive_bias
+task:
+  - cobie_sst2
+  - cobie_sst2_hard
+  - cobie_arc_easy_3choices
+  - cobie_arc_challenge_3choices
+  - cobie_arc_easy_4choices
+  - cobie_arc_challenge_4choices
