@@ -90,6 +90,7 @@ class HFLM(TemplateLM):
         delta: Optional[str] = None,
         autogptq: Optional[Union[bool, str]] = False,
         gptqmodel: Optional[bool] = False,
+        gguf_file: Optional[str] = None,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -164,6 +165,7 @@ class HFLM(TemplateLM):
                 pretrained,
                 revision=revision,
                 trust_remote_code=trust_remote_code,
+                gguf_file=gguf_file,
             )
 
             # determine which of 'causal' and 'seq2seq' backends to use for HF models
@@ -178,6 +180,7 @@ class HFLM(TemplateLM):
             revision=revision,
             trust_remote_code=trust_remote_code,
             use_fast_tokenizer=use_fast_tokenizer,
+            gguf_file=gguf_file,
         )
 
         # if we passed `pretrained` as a string, initialize our model now
@@ -196,6 +199,7 @@ class HFLM(TemplateLM):
                 delta=delta,
                 autogptq=autogptq,
                 gptqmodel=gptqmodel,
+                gguf_file=gguf_file,
                 **kwargs,
             )
 
@@ -508,12 +512,14 @@ class HFLM(TemplateLM):
         pretrained: str,
         revision: str = "main",
         trust_remote_code: bool = False,
+        gguf_file: Optional[str] = None,
     ) -> None:
         """Return the model config for HuggingFace models"""
         self._config = transformers.AutoConfig.from_pretrained(
             pretrained,
             revision=revision,
             trust_remote_code=trust_remote_code,
+            gguf_file=gguf_file,
         )
 
     def _create_model(
@@ -535,6 +541,7 @@ class HFLM(TemplateLM):
         delta: Optional[str] = None,
         autogptq: Optional[Union[bool, str]] = False,
         gptqmodel: Optional[bool] = False,
+        gguf_file: Optional[str] = None,
         **kwargs,
     ) -> None:
         """
@@ -579,6 +586,7 @@ class HFLM(TemplateLM):
                 revision=revision,
                 torch_dtype=get_dtype(dtype),
                 trust_remote_code=trust_remote_code,
+                gguf_file=gguf_file,
                 **model_kwargs,
             )
         else:
@@ -676,6 +684,7 @@ class HFLM(TemplateLM):
         revision: Optional[str] = "main",
         trust_remote_code: Optional[bool] = False,
         use_fast_tokenizer: Optional[bool] = True,
+        gguf_file: Optional[str] = None,
     ) -> None:
         """
         Helper method during initialization.
@@ -683,14 +692,21 @@ class HFLM(TemplateLM):
         Create a tokenizer object corresponding to the correct
         tokenizer for value of `pretrained`, or use the pre-initialized tokenizer passed.
         """
+        kwargs = {
+            "revision": revision,
+            "trust_remote_code": trust_remote_code,
+        }
+
+        # gguf format embeds tokenizer and is not compatible with hf tokenizer `use_fast` param
+        if gguf_file is not None:
+            kwargs["gguf_file"] = gguf_file
+        else:
+            kwargs["use_fast"] = use_fast_tokenizer
 
         if tokenizer:
             if isinstance(tokenizer, str):
                 self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-                    tokenizer,
-                    revision=revision,
-                    trust_remote_code=trust_remote_code,
-                    use_fast=use_fast_tokenizer,
+                    tokenizer, **kwargs
                 )
             else:
                 assert isinstance(
@@ -705,10 +721,7 @@ class HFLM(TemplateLM):
                 # get the HF hub name via accessor on model
                 model_name = self.model.name_or_path
             self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-                model_name,
-                revision=revision,
-                trust_remote_code=trust_remote_code,
-                use_fast=use_fast_tokenizer,
+                model_name, **kwargs
             )
         return None
 
@@ -818,6 +831,12 @@ class HFLM(TemplateLM):
             **add_special_tokens,
         )
         if left_truncate_len:
+            original_lengths = encoding["input_ids"].size(1)
+            if original_lengths > left_truncate_len:
+                eval_logger.warn(
+                    f"Left truncation applied. Original sequence length was {original_lengths}, "
+                    f"truncating to last {left_truncate_len} tokens. Some content will be lost.",
+                )
             encoding["input_ids"] = encoding["input_ids"][:, -left_truncate_len:]
             encoding["attention_mask"] = encoding["attention_mask"][
                 :, -left_truncate_len:
@@ -1096,6 +1115,13 @@ class HFLM(TemplateLM):
 
                 # when too long to fit in context, truncate from the left
                 if self.backend == "causal":
+                    total_length = len(context_enc) + len(continuation_enc)
+                    if total_length > self.max_length + 1:
+                        eval_logger.warn(
+                            f"Combined length of context ({len(context_enc)}) and continuation ({len(continuation_enc)}) "
+                            f"exceeds model's maximum length ({self.max_length}). "
+                            f"Truncating {total_length - self.max_length + 1} tokens from the left."
+                        )
                     inp = torch.tensor(
                         (context_enc + continuation_enc)[-(self.max_length + 1) :][:-1],
                         dtype=torch.long,
@@ -1303,6 +1329,9 @@ class HFLM(TemplateLM):
             if self.backend == "causal":
                 # max len for inputs = max length, minus room to generate the max new tokens
                 max_ctx_len = self.max_length - max_gen_toks
+                assert (
+                    max_ctx_len > 0
+                ), f"Invalid configuration: requested max tokens to generate ({max_gen_toks}) must be less than model's maximum sequence length ({self.max_length})."
             elif self.backend == "seq2seq":
                 # max len for inputs = encoder's whole max_length
                 max_ctx_len = self.max_length
