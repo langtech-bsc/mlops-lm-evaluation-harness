@@ -1,0 +1,35 @@
+group: iberobench_minimal
+task:
+  - hellaswag  
+  - xstorycloze_es
+  - escola
+  - mgsm_direct_en
+  - xnli_es
+  - xnli_ca
+  - xnli_eu_native
+  - paws_ca
+  - openbookqa_ca
+  - eus_exams_eu_opeosakitecnicoeu
+  - openbookqa
+  - social_iqa
+  - belebele_cat_Latn
+  - cabreu_extractive
+  - xlsum_es
+  - flores_es-it
+  - flores_ca-es
+  - flores_eu-ca
+  - flores_ca-gl
+  - phrases_es-va
+  - flores_en-gl
+  - flores_ca-pt
+  - flores_en-eu
+  - truthfulqa_mc1
+  - arc_ca_challenge
+  - wnli
+  - arc_challenge
+  - eus_proficiency
+  - parafrases_gl
+  - wnli_es
+  - xquad_en
+metadata:
+  version: 1.0
