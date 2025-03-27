@@ -1485,6 +1485,12 @@ class ConfigurableTask(Task):
                 ),
             }
 
+            # include custom metrics
+            for metric in use_metric:
+                if metric not in result_dict:
+                    result_score = self._metric_fn_list[metric](doc, lls)
+                    result_dict[metric] = result_score
+
             if "acc_mutual_info" in use_metric:
                 lls_mutual_info = [
                     ll_c - ll_u for ll_c, ll_u in zip(lls, lls_unconditional)
