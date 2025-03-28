@@ -4,6 +4,15 @@ import numpy as np
 import pandas as pd
 
 def _stereotyped_groups(doc):
+    """
+    Get stereotyped groups from the doc and pre-process them if needed.
+
+    Args:
+        doc (dict): The instance doc.
+
+    Returns:
+        list[str]: The parsed list of stereotyped groups.
+    """
     stereotyped_groups = doc["additional_metadata"]["stereotyped_groups"]
 
     def _fix_inconsistent(group):
@@ -17,12 +26,30 @@ def _stereotyped_groups(doc):
     return stereotyped_groups
 
 def _unknown_answer(doc):
+    """
+    Get the label (id) of the "unknown" answer (its position is randomized across instances).
+
+    Args:
+        doc (dict): The instance doc.
+
+    Returns:
+        int: The positional ID of the "unknown" answer.
+    """
     for answer_key, info_list in doc["answer_info"].items():
         if info_list[1] == "unknown":
             answer_idx = int(answer_key[-1])
             return answer_idx
 
 def _correct_answer_groups(doc):
+    """
+    Get the social groups from the answer info of the correct answer.
+
+    Args:
+        doc (dict): The instance doc.
+
+    Returns:
+        list[str]: Social groups.
+    """
     label = doc["label"]
     answer_groups = []
 
@@ -32,6 +59,15 @@ def _correct_answer_groups(doc):
     return answer_groups
 
 def _model_answer_groups(doc, model_answer):
+    """
+    Get the social groups from the answer info of the model's answer.
+
+    Args:
+        doc (dict): The instance doc.
+
+    Returns:
+        list[str]: Social groups.
+    """
     answer_groups = []
     for group in doc["answer_info"][f"ans{model_answer}"]:
         answer_groups.extend(group.split("-"))
@@ -39,6 +75,15 @@ def _model_answer_groups(doc, model_answer):
     return answer_groups
 
 def _question_type(doc):
+    """
+    Get the "question type" (neutral, stereotypical or anti-stereotypical) of the instance.
+
+    Args:
+        doc (dict): The instance doc.
+
+    Returns:
+        str: The question type ("unknown", "pro-stereo" or "anti-stereo")
+    """
     if doc["context_condition"] == "ambig":
         return "unknown"
 
@@ -66,14 +111,14 @@ def _model_answer(lls) -> int:
 
 def _model_answer_type(doc, model_answer):
     """
-    Given a doc and the model's answer, define whether the answer qualifies as "unknown", "pro-stereo" or "anti-stereo".
+    Given a doc and the model's answer, define whether the answer qualifies as neutral ("unknown"), stereotypical ("pro-stereo") or anti-stereotypical ("anti-stereo").
 
     Args:
         doc (dict): The instance doc.
         model_answer (int): 0, 1 or 2 for ans0, ans1 or ans2.
 
     Returns:
-        str: The type of the model's answer: unknown, pro-stereo or anti-stereo.
+        str: "unknown", "pro-stereo" or "anti-stereo"
     """
 
     question_type = _question_type(doc)

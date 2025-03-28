@@ -22,14 +22,14 @@ def _model_answer(lls) -> int:
 
 def _model_answer_type(doc, model_answer):
     """
-    Given a doc and the model's answer, define whether the answer qualifies as "unknown", "pro-stereo" or "anti-stereo".
+    Given a doc and the model's answer, define whether the answer qualifies as neutral ("unknown"), stereotypical ("pro-stereo") or anti-stereotypical ("anti-stereo").
 
     Args:
         doc (dict): The instance doc.
         model_answer (int): 0, 1 or 2 for ans0, ans1 or ans2.
 
     Returns:
-        str: The type of the model's answer: unknown, pro-stereo or anti-stereo.
+        str: "unknown", "pro-stereo" or "anti-stereo"
     """
 
     correct = (model_answer == doc["label"])
