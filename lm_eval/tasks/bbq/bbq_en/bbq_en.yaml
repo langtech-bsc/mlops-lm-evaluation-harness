@@ -1,0 +1,28 @@
+group: bbq_en
+tag: bbq_en
+task:
+  - bbq_en_age
+  - bbq_en_disability_status
+  - bbq_en_gender_identity
+  - bbq_en_nationality
+  - bbq_en_physical_appearance
+  - bbq_en_race_ethnicity
+  - bbq_en_race_x_gender
+  - bbq_en_race_x_ses
+  - bbq_en_religion
+  - bbq_en_ses
+  - bbq_en_sexual_orientation
+
+aggregate_metric_list:
+  - metric: "acc_ambig"
+    weight_by_size: true
+  - metric: "acc_disambig"
+    weight_by_size: true
+  - metric: "bias_score_ambig"
+    weight_by_size: true
+  - metric: "bias_score_disambig"
+    weight_by_size: true
+
+  # `weight_by_size`:
+  # `true` for micro average: retain all subtasks' per-document results and take the mean over all documents' scores to get the aggregate mean
+  # `false` for macro average: take the mean of the subtasks' aggregated results
