@@ -1,0 +1,5 @@
+group: iberobench_english
+task:
+  - xnli_en_iberobench
+metadata:
+  version: 1.0
