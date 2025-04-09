@@ -1,0 +1,3 @@
+include: _veritasqa_mc1_yaml
+dataset_name: es
+task: veritasqa_mc1_es
