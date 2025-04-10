@@ -3,6 +3,7 @@ task:
   - belebele_spa_Latn
   - copa_es
   - escola
+  - esbbq
   - openbookqa_es
   - wnli_es
   - xnli_es_spanish_bench
