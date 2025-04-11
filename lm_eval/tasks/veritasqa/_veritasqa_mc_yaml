@@ -1,5 +1,3 @@
-group:
-  - veritasqa
 task: null
 dataset_path: projecte-aina/veritasQA
 dataset_name: null
