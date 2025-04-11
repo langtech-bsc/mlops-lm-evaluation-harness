@@ -1,0 +1,20 @@
+group: iberobench_english
+task:
+  - belebele_eng_Latn
+  - arc_easy
+  - arc_challenge
+  - hellaswag
+  - copa
+  - xstorycloze_en
+  - xnli_en_iberobench
+  - xquad_en
+  - openbookqa
+  - piqa
+  - social_iqa
+  - cola
+  - wnli
+  - truthfulqa
+  - paws_en
+  - mgsm_direct_en
+metadata:
+  version: 1.0
