@@ -1,3 +1,0 @@
-include: _veritasqa_mc1_yaml
-dataset_name: gl
-task: veritasqa_mc1_gl

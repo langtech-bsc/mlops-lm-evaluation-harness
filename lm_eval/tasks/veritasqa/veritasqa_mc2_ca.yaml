@@ -1,3 +1,0 @@
-include: _veritasqa_mc2_yaml
-dataset_name: ca
-task: veritasqa_mc2_ca

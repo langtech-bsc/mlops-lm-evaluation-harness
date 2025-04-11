@@ -1,6 +1,6 @@
-include: _veritasqa_gen_yaml
+include: _veritasqa_mc_yaml
 dataset_name: ca
-task: veritasqa_gen_ca
+task: veritasqa_mc_ca
 group:
   - veritasqa
   - veritasqa_ca
