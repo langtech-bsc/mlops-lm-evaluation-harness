@@ -1,6 +1,6 @@
 include: _veritasqa_mc_yaml
 dataset_name: gl
 task: veritasqa_mc_gl
-group:
+tag:
   - veritasqa
   - veritasqa_gl
