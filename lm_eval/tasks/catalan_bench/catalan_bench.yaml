@@ -1,26 +1,27 @@
 group: catalan_bench
 task:
+    - arc_ca_challenge
+    - arc_ca_easy
     - belebele_cat_Latn
-    - xnli_ca
+    - cabreu
+    - catalanqa
     - catcola
+    - cocoteros_va
     - copa_ca
+    - coqcat
+    - flores_ca
+    - mgsm_direct_ca
     - openbookqa_ca
     - parafraseja
     - paws_ca
+    - phrases_va
     - piqa_ca
     - siqa_ca
     - teca
+    - veritasqa_ca
     - wnli_ca
-    - arc_ca_easy
-    - arc_ca_challenge
-    - xstorycloze_ca
+    - xnli_ca
     - xquad_ca
-    - catalanqa
-    - coqcat
-    - flores_ca
-    - cabreu
-    - mgsm_direct_ca
-    - phrases_va
-    - cocoteros_va
+    - xstorycloze_ca
 metadata:
   version: 2.0

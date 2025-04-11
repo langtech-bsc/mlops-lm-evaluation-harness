@@ -3,12 +3,13 @@ task:
   - belebele_glg_Latn
   - flores_gl
   - galcola
-  - summarization_gl
+  - mgsm_direct_gl
+  - openbookqa_gl
   - parafrases_gl
   - paws_gl
-  - openbookqa_gl
-  - mgsm_direct_gl
+  - summarization_gl
   - truthfulqa_gl
+  - veritasqa_gl
   - xnli_gl
   - xstorycloze_gl
 metadata:
