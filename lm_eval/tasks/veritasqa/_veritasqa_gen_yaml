@@ -1,4 +1,4 @@
-tag:
+group:
   - veritasqa
 task: null
 dataset_path: projecte-aina/veritasQA
@@ -11,6 +11,9 @@ num_fewshot: 0
 doc_to_text: "Q: {{question}}\nA:"
 doc_to_target: ""
 generation_kwargs:
+  top_k: 1
+  max_new_tokens: 50
+  num_return_sequences: 1
   until:
     - "Q:"
     - "\n"
