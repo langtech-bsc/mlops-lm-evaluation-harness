@@ -1,0 +1,31 @@
+task: null
+dataset_path: projecte-aina/veritasQA
+dataset_name: null
+output_type: multiple_choice
+training_split: null
+validation_split: null
+test_split: test
+num_fewshot: 0
+doc_to_target: "{{mc_targets.best_answer_label}}"
+doc_to_text: "Q: {{question}}\nA:"
+doc_to_choice: "{{mc_targets.choices}}"
+process_docs: !function utils.process_docs_mc
+process_results: !function utils.process_results_mc
+metric_list:
+  - metric: lprob_max
+    aggregation: mean
+    higher_is_better: true
+  - metric: lprob_diff
+    aggregation: mean
+    higher_is_better: true
+  - metric: mc1
+    aggregation: mean
+    higher_is_better: true
+  - metric: mc2
+    aggregation: mean
+    higher_is_better: true
+  - metric: mc3
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

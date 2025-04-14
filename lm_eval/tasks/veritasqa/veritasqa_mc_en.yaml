@@ -1,0 +1,6 @@
+include: _veritasqa_mc_yaml
+dataset_name: en
+task: veritasqa_mc_en
+tag:
+  - veritasqa
+  - veritasqa_en
