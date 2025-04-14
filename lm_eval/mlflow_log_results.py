@@ -2,6 +2,7 @@ import argparse
 import os
 from typing import Any, Dict, Union, Tuple
 
+import numpy as np
 import mlflow
 
 METRICS_TO_TRACK = [
@@ -207,7 +208,6 @@ TASK_SCHEME = {
         "category": "Translation (subtask)",
         "language": "ca",
     },
-    # "cabreu": {"num_labels": "gen_task", "metric": "bleu", "category": "Summarization", "language": "ca"},
     "cabreu_extractive": {
         "num_labels": "gen_task",
         "metric": "rouge1",
@@ -230,24 +230,6 @@ TASK_SCHEME = {
         "num_labels": "gen_task",
         "metric": "exact match",
         "category": "Math",
-        "language": "ca",
-    },
-    "veritasqa_gen_ca": {
-        "num_labels": "gen_task",
-        "metric": "bleu_max",
-        "category": "Truthfulness",
-        "language": "ca",
-    },
-    "veritasqa_mc1_ca": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "ca",
-    },
-    "veritasqa_mc2_ca": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
         "language": "ca",
     },
     "phrases_va": {
@@ -280,6 +262,18 @@ TASK_SCHEME = {
         "category": "Translation - Adaptation",
         "language": "es",
     },
+    "veritasqa_gen_ca": {
+        "num_labels":" gen_task",
+        "metric": "bleu_max,bleu_acc,bleu_diff",
+        "category": "Truthfulness",
+        "language": "ca",
+    },
+    "veritasqa_mc_ca": {
+        "num_labels": "varying",
+        "metric": "lprob_max,lprob_diff,mc1,mc2,mc3",
+        "category": "Truthfulness",
+        "language": "ca",
+    },
     # es
     "belebele_spa_Latn": {
         "num_labels": "4",
@@ -293,7 +287,7 @@ TASK_SCHEME = {
         "category": "NLI",
         "language": "es",
     },
-    "xnli_es": {
+    "xnli_es_spanish_bench": {
         "num_labels": "3",
         "metric": "acc",
         "category": "NLI",
@@ -333,24 +327,6 @@ TASK_SCHEME = {
         "num_labels": "gen_task",
         "metric": "bleu",
         "category": "Summarization",
-        "language": "es",
-    },
-    "veritasqa_gen_es": {
-        "num_labels": "gen_task",
-        "metric": "bleu_max",
-        "category": "Truthfulness",
-        "language": "es",
-    },
-    "veritasqa_mc1_es": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "es",
-    },
-    "veritasqa_mc2_es": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
         "language": "es",
     },
     "flores_es": {
@@ -453,6 +429,84 @@ TASK_SCHEME = {
         "num_labels": "gen_task",
         "metric": "bleu",
         "category": "Translation (subtask)",
+        "language": "es",
+    },
+    "esbbq": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_age": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_disability_status": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_gender": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_lgbtqia": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_nationality": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_physical_appearance": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_race_ethnicity": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_religion": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_ses": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+    "esbbq_spanish_region": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "es",
+    },
+        "veritasqa_gen_es": {
+        "num_labels":" gen_task",
+        "metric": "bleu_max,bleu_acc,bleu_diff",
+        "category": "Truthfulness",
+        "language": "es",
+    },
+    "veritasqa_mc_es": {
+        "num_labels": "varying",
+        "metric": "lprob_max,lprob_diff,mc1,mc2,mc3",
+        "category": "Truthfulness",
         "language": "es",
     },
     # eu
@@ -848,24 +902,6 @@ TASK_SCHEME = {
         "category": "QA",
         "language": "gl",
     },
-    "veritasqa_gen_gl": {
-        "num_labels": "gen_task",
-        "metric": "bleu_max",
-        "category": "Truthfulness",
-        "language": "gl",
-    },
-    "veritasqa_mc1_gl": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "gl",
-    },
-    "veritasqa_mc2_gl": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "gl",
-    },
     "truthfulqa_gl_gen": {
         "num_labels": "gen_task",
         "metric": "bleu_max",
@@ -986,6 +1022,18 @@ TASK_SCHEME = {
         "category": "Translation (subtask)",
         "language": "gl",
     },
+    "veritasqa_gen_gl": {
+        "num_labels":" gen_task",
+        "metric": "bleu_max,bleu_acc,bleu_diff",
+        "category": "Truthfulness",
+        "language": "gl",
+    },
+    "veritasqa_mc_gl": {
+        "num_labels": "varying",
+        "metric": "lprob_max,lprob_diff,mc1,mc2,mc3",
+        "category": "Truthfulness",
+        "language": "gl",
+    },
     # en
     "belebele_eng_Latn": {
         "num_labels": "4",
@@ -1079,28 +1127,22 @@ TASK_SCHEME = {
         "category": "QA",
         "language": "en",
     },
-    "veritasqa_gen_en": {
-        "num_labels": "gen_task",
-        "metric": "bleu_max",
-        "category": "Truthfulness",
-        "language": "en",
-    },
-    "veritasqa_mc1_en": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "en",
-    },
-    "veritasqa_mc2_en": {
-        "num_labels": "4",
-        "metric": "acc",
-        "category": "Truthfulness",
-        "language": "en",
-    },
     "mgsm_direct_en": {
         "num_labels": "gen_task",
         "metric": "exact match",
         "category": "Math",
+        "language": "en",
+    },
+    "veritasqa_gen_en": {
+        "num_labels":" gen_task",
+        "metric": "bleu_max,bleu_acc,bleu_diff",
+        "category": "Truthfulness",
+        "language": "en",
+    },
+    "veritasqa_mc_en": {
+        "num_labels": "varying",
+        "metric": "lprob_max,lprob_diff,mc1,mc2,mc3",
+        "category": "Truthfulness",
         "language": "en",
     },
     # pt
@@ -1227,16 +1269,11 @@ TASK_SCHEME = {
 }
 
 RANDOM_RESULTS = {
-    "veritasqa_mc1_en": 22.9,
-    "veritasqa_mc2_en": 41.7,
-    "veritasqa_mc1_es": 22.9,
-    "veritasqa_mc2_es": 40.7,
-    "veritasqa_mc1_ca": 22.8,
-    "veritasqa_mc2_ca": 38.9,
-    "veritasqa_mc1_gl": 22.9,
-    "veritasqa_mc2_gl": 40.5,
+    "veritasqa_mc_ca": 15.0,
+    "veritasqa_mc_en": 15.0,
+    "veritasqa_mc_gl": 15.0,
+    "veritasqa_mc_es": 15.0,
 }
-
 
 def get_random(task, num_labels) -> float:
     if task in RANDOM_RESULTS.keys():
@@ -1251,6 +1288,8 @@ def get_random(task, num_labels) -> float:
         return 8.33
     elif num_labels in ["gen_task", "2 (mcc)"]:
         return 0.0
+    elif num_labels in ["varying"]:
+        return np.nan
 
 
 def get_max(metric_name: str) -> int:

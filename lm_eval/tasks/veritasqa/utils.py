@@ -2,7 +2,7 @@ import numpy as np
 import sacrebleu
 
 """
-Loosely based on lm_eval/ŧasks/truthfulqa/utils.py (but some of the metrics are different).
+Loosely based on lm_eval/tasks/truthfulqa/utils.py (but some of the metrics are different).
 """
 
 def process_docs_gen(dataset):
