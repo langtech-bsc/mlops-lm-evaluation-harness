@@ -263,7 +263,7 @@ TASK_SCHEME = {
         "language": "es",
     },
     "veritasqa_gen_ca": {
-        "num_labels":" gen_task",
+        "num_labels": "gen_task",
         "metric": "bleu_max,bleu_acc,bleu_diff",
         "category": "Truthfulness",
         "language": "ca",
@@ -498,7 +498,7 @@ TASK_SCHEME = {
         "language": "es",
     },
         "veritasqa_gen_es": {
-        "num_labels":" gen_task",
+        "num_labels": "gen_task",
         "metric": "bleu_max,bleu_acc,bleu_diff",
         "category": "Truthfulness",
         "language": "es",
@@ -507,6 +507,12 @@ TASK_SCHEME = {
         "num_labels": "varying",
         "metric": "lprob_max,lprob_diff,mc1,mc2,mc3",
         "category": "Truthfulness",
+        "language": "es",
+    },
+    "cocoteros_es": {
+        "num_labels": "gen_task",
+        "metric": "bleu,rouge1",
+        "category": "Constrained Text Generation",
         "language": "es",
     },
     # eu
@@ -1023,7 +1029,7 @@ TASK_SCHEME = {
         "language": "gl",
     },
     "veritasqa_gen_gl": {
-        "num_labels":" gen_task",
+        "num_labels": "gen_task",
         "metric": "bleu_max,bleu_acc,bleu_diff",
         "category": "Truthfulness",
         "language": "gl",
@@ -1071,7 +1077,7 @@ TASK_SCHEME = {
         "category": "Commonsense Reasoning",
         "language": "en",
     },
-    "xnli_en": {
+    "xnli_en_iberobench": {
         "num_labels": "3",
         "metric": "acc",
         "category": "NLI",
@@ -1134,7 +1140,7 @@ TASK_SCHEME = {
         "language": "en",
     },
     "veritasqa_gen_en": {
-        "num_labels":" gen_task",
+        "num_labels": "gen_task",
         "metric": "bleu_max,bleu_acc,bleu_diff",
         "category": "Truthfulness",
         "language": "en",
@@ -1288,7 +1294,7 @@ def get_random(task, num_labels) -> float:
         return 8.33
     elif num_labels in ["gen_task", "2 (mcc)"]:
         return 0.0
-    elif num_labels in ["varying"]:
+    elif num_labels == "varying":
         return np.nan
 
 
