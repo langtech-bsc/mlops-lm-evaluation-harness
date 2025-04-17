@@ -7,14 +7,25 @@ import mlflow
 
 METRICS_TO_TRACK = [
     "acc",
+    "acc_ambig",
+    "acc_disambig",
+    "bias_score_ambig",
+    "bias_score_disambig",
     "bleu",
+    "bleu_acc",
+    "bleu_diff",
     "bleu_max",
-    "mcc",
-    "f1",
-    "exact_match_remove_whitespace",
     "em",
-    "rouge1",
     "exact_match_get-answer",
+    "exact_match_remove_whitespace",
+    "f1",
+    "lprob_diff",
+    "lprob_max",
+    "mcc",
+    "mc1",
+    "mc2",
+    "mc3",
+    "rouge1",
 ]
 
 TASK_SCHEME = {
@@ -497,7 +508,7 @@ TASK_SCHEME = {
         "category": "Social Bias",
         "language": "es",
     },
-        "veritasqa_gen_es": {
+    "veritasqa_gen_es": {
         "num_labels": "gen_task",
         "metric": "bleu_max,bleu_acc,bleu_diff",
         "category": "Truthfulness",
@@ -1281,6 +1292,7 @@ RANDOM_RESULTS = {
     "veritasqa_mc_es": 15.0,
 }
 
+
 def get_random(task, num_labels) -> float:
     if task in RANDOM_RESULTS.keys():
         return RANDOM_RESULTS[task]
@@ -1310,12 +1322,7 @@ def get_model_name_from_model_args(model_args: str) -> str:
     model_arg_parts = model_args.split(",")
 
     for model_arg in model_arg_parts:
-        if model_arg.startswith("pretrained"):
-            model_name_parts = model_arg.split("=")
-            model_name = model_name_parts[1]
-            model_name = shorten_model_name(model_name)
-            return model_name
-        elif model_arg.startswith("path"):
+        if model_arg.startswith("pretrained") or model_arg.startswith("path"):
             model_name_parts = model_arg.split("=")
             model_name = model_name_parts[1]
             model_name = shorten_model_name(model_name)
@@ -1393,12 +1400,24 @@ def log_to_mlflow(
                             score = float(score)
                             score = round(score, 2)
                             mlflow.log_metric(str(metric_name), score)
-                            mlflow.log_metric("score", score)
-                            max = get_max(metric_name)
-                            mlflow.log_param("max", max)
-                            normalized_score = normalize_score(score, random, max)
-                            mlflow.log_metric(
-                                f"normalized_{metric_name}", normalized_score
-                            )
-                            mlflow.log_metric(f"normalized_score", normalized_score)
+
+                            if (
+                                task.startswith("veritasqa")
+                                or task.startswith("esbbq")
+                                or task.startswith("cocoteros")
+                            ):
+                                mlflow.log_metric("score", np.nan)
+                                mlflow.log_param("max", np.nan)
+                                mlflow.log_metric(f"normalized_{metric_name}", np.nan)
+                                mlflow.log_metric(f"normalized_score", np.nan)
+                            else:
+                                mlflow.log_metric("score", score)
+                                max = get_max(metric_name)
+                                mlflow.log_param("max", max)
+                                normalized_score = normalize_score(score, random, max)
+                                mlflow.log_metric(
+                                    f"normalized_{metric_name}", normalized_score
+                                )
+                                mlflow.log_metric(f"normalized_score", normalized_score)
+
                             mlflow.log_param("model", model_name)
