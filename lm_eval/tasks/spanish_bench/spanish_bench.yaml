@@ -7,6 +7,7 @@ task:
   - escola
   - flores_es
   - mgsm_direct_es_spanish_bench
+  - mmmlu_es
   - openbookqa_es
   - paws_es_spanish_bench
   - phrases_es
