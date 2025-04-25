@@ -285,6 +285,12 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "ca",
     },
+    "m_mmlu_ca": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "ca",
+    },
     # es
     "belebele_spa_Latn": {
         "num_labels": "4",
@@ -524,6 +530,12 @@ TASK_SCHEME = {
         "num_labels": "gen_task",
         "metric": "bleu,rouge1",
         "category": "Constrained Text Generation",
+        "language": "es",
+    },
+    "m_mmlu_es": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
         "language": "es",
     },
     # eu
@@ -876,6 +888,12 @@ TASK_SCHEME = {
         "category": "Translation (subtask)",
         "language": "eu",
     },
+    "m_mmlu_eu": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "eu",
+    },
     # gl
     "belebele_glg_Latn": {
         "num_labels": "4",
@@ -1162,6 +1180,12 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "en",
     },
+    "m_mmlu_en": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "en",
+    },
     # pt
     "assin_entailment": {
         "num_labels": "3",
@@ -1281,6 +1305,12 @@ TASK_SCHEME = {
         "num_labels": "4",
         "metric": "acc",
         "category": "Reading Comprehension",
+        "language": "pt",
+    },
+    "m_mmlu_pt": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
         "language": "pt",
     },
 }
