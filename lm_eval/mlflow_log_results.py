@@ -285,6 +285,7 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "ca",
     },
+    # From alexandrainst/m_mmlu
     "m_mmlu_ca": {
         "num_labels": "4",
         "metric": "acc",
@@ -532,7 +533,15 @@ TASK_SCHEME = {
         "category": "Constrained Text Generation",
         "language": "es",
     },
+    # From alexandrainst/m_mmlu
     "m_mmlu_es": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "es",
+    },
+    # From openai/MMMLU
+    "mmmlu_es": {
         "num_labels": "4",
         "metric": "acc",
         "category": "General Knowledge",
@@ -888,6 +897,7 @@ TASK_SCHEME = {
         "category": "Translation (subtask)",
         "language": "eu",
     },
+    # From alexandrainst/m_mmlu
     "m_mmlu_eu": {
         "num_labels": "4",
         "metric": "acc",
@@ -1180,7 +1190,15 @@ TASK_SCHEME = {
         "category": "Truthfulness",
         "language": "en",
     },
+    # From alexandrainst/m_mmlu
     "m_mmlu_en": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "en",
+    },
+    # From openai/MMMLU
+    "mmmlu_en": {
         "num_labels": "4",
         "metric": "acc",
         "category": "General Knowledge",
@@ -1307,7 +1325,15 @@ TASK_SCHEME = {
         "category": "Reading Comprehension",
         "language": "pt",
     },
+    # From alexandrainst/m_mmlu
     "m_mmlu_pt": {
+        "num_labels": "4",
+        "metric": "acc",
+        "category": "General Knowledge",
+        "language": "pt",
+    },
+    # From openai/MMMLU
+    "mmmlu_pt": {
         "num_labels": "4",
         "metric": "acc",
         "category": "General Knowledge",
