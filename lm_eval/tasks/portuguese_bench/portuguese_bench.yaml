@@ -1,8 +1,9 @@
 group: portuguese_bench
 task:
+  - assin_entailment
+  - assin_paraphrase
   - belebele_por_Latn
   - flores_pt
-  - assin_paraphrase
-  - assin_entailment
+  - mmmlu_pt
 metadata:
   version: 1.0

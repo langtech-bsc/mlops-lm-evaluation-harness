@@ -1,0 +1,16 @@
+group: mmmlu
+task:
+  - mmmlu_ar
+  - mmmlu_bn
+  - mmmlu_de
+  - mmmlu_es
+  - mmmlu_fr
+  - mmmlu_hi
+  - mmmlu_id
+  - mmmlu_it
+  - mmmlu_ja
+  - mmmlu_ko
+  - mmmlu_pt
+  - mmmlu_sw
+  - mmmlu_yo
+  - mmmlu_zh
