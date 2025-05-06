@@ -7,7 +7,6 @@ task:
   - copa
   - hellaswag
   - mgsm_direct_en
-  - mmmlu_en
   - openbookqa
   - paws_en
   - piqa
