@@ -1198,7 +1198,7 @@ TASK_SCHEME = {
         "language": "en",
     },
     # From openai/MMMLU
-    "mmmlu": {
+    "mmlu": {
         "num_labels": "4",
         "metric": "acc",
         "category": "General Knowledge",
