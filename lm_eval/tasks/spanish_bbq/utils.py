@@ -2,7 +2,7 @@ import logging
 
 import numpy as np
 import pandas as pd
-
+from time import time
 
 def _model_answer(lls):
     """
@@ -138,7 +138,7 @@ def acc_disambig_agg(results):
     acc_score_disambig: float = num_correct_disambig / total_disambig
     return acc_score_disambig
 
-def bias_score_ambig_agg(results): # TODO: this is wrong!
+def bias_score_ambig_agg(results):
     """
     Aggregation function for BBQ bias scores over *ambiguous* instances.
 
