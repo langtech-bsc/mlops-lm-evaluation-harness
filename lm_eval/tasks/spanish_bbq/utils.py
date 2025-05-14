@@ -1,8 +1,6 @@
 import logging
 
 import numpy as np
-import pandas as pd
-from time import time
 
 def _model_answer(lls):
     """
