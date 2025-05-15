@@ -1,4 +1,4 @@
-dataset_path: valleruizf/EsBBQ # TODO!
+dataset_path: BSC-LT/EsBBQ
 dataset_name: null
 output_type: multiple_choice
 training_split: null
