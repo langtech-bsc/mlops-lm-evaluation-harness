@@ -61,6 +61,18 @@ def _model_answer_type(doc, model_answer):
                 return "anti-stereo" if ans_group in doc["stereotyped_groups"] else "pro-stereo"
 
 def process_results(doc, results):
+    """
+    Given an instance doc and the results from the evaluation, this function processes these results to transform them into the information that is necessary for the evaluation metrics to be calculated. Therefore, the returned dict contains information at an instance-level that will be required to calculate the final aggregated metrics over multiple instances (per category or for the entire dataset).
+    NOTE that the return value is not directly the result of the metric; there is no instance-level "bias score". The value of `bias_score_ambig` is the information necessary for `bias_score_ambig_agg` to aggregate and calculate bias score over ambiguous instances, for example.
+
+    Args:
+        doc (dict): The instance doc.
+        results (list): List with one tuple of results per multiple-choice option (thus 11 elements) where the first element is the loglikelihood of the option, and the second element is a boolean value of whether the corresponding option is correct or not (to be ignored because we don't use it).
+
+    Returns:
+        dict: Dictionary with tuples of values that shall be used to calculate each aggregated metric.
+    """
+
     lls, _ = zip(*results)
 
     # Parse model answer
