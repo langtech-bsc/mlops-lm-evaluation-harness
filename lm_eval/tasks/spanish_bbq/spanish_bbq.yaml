@@ -1,0 +1,7 @@
+group: spanish_bbq
+tag:
+  - spanish_bbq
+  - social_bias
+task:
+  - esbbq
+  - cabbq

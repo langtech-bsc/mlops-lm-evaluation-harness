@@ -1,7 +1,4 @@
 group: cabbq
-tag:
-  - cabbq
-  - social_bias
 task:
   - cabbq_age
   - cabbq_disability_status

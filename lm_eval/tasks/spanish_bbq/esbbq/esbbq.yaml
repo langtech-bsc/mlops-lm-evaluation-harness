@@ -1,7 +1,4 @@
 group: esbbq
-tag:
-  - esbbq
-  - social_bias
 task:
   - esbbq_age
   - esbbq_disability_status
