@@ -291,6 +291,72 @@ TASK_SCHEME = {
         "category": "General Knowledge",
         "language": "ca",
     },
+    "cabbq": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_age": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_disability_status": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_gender": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_lgbtqia": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_nationality": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_physical_appearance": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_race_ethnicity": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_religion": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_ses": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
+    "cabbq_spanish_region": {
+        "num_labels": "3",
+        "metric": "acc_ambig,acc_disambig,bias_score_ambig,bias_score_disambig",
+        "category": "Social Bias",
+        "language": "ca",
+    },
     # es
     "belebele_spa_Latn": {
         "num_labels": "4",
