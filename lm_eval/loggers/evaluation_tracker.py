@@ -249,12 +249,10 @@ class EvaluationTracker:
                     )
                     self.api.upload_file(
                         repo_id=repo_id,
-                        path_or_fileobj=str(
-                            path.joinpath(f"results_{self.date_id}.json")
-                        ),
+                        path_or_fileobj=str(file_results_aggregated),
                         path_in_repo=os.path.join(
                             self.general_config_tracker.model_name,
-                            f"results_{self.date_id}.json",
+                            file_results_aggregated.name,
                         ),
                         repo_type="dataset",
                         commit_message=f"Adding aggregated results for {self.general_config_tracker.model_name}",
@@ -288,8 +286,18 @@ class EvaluationTracker:
             try:
                 eval_logger.info(f"Saving per-sample results for: {task_name}")
 
+<<<<<<< HEAD
                 directory_path = os.path.dirname(self.output_path) if self.output_path else os.path.dirname(Path.cwd())
                 path = Path(directory_path if self.output_path else Path.cwd())
+=======
+                path = Path(self.output_path if self.output_path else Path.cwd())
+                if path.suffix == ".json":
+                    path = path.parent
+                else:
+                    path = path.joinpath(
+                        self.general_config_tracker.model_name_sanitized
+                    )
+>>>>>>> main
                 path.mkdir(parents=True, exist_ok=True)
                 
                 self.date_id = datetime.now().isoformat().replace(":", "-")
