@@ -286,18 +286,8 @@ class EvaluationTracker:
             try:
                 eval_logger.info(f"Saving per-sample results for: {task_name}")
 
-<<<<<<< HEAD
                 directory_path = os.path.dirname(self.output_path) if self.output_path else os.path.dirname(Path.cwd())
                 path = Path(directory_path if self.output_path else Path.cwd())
-=======
-                path = Path(self.output_path if self.output_path else Path.cwd())
-                if path.suffix == ".json":
-                    path = path.parent
-                else:
-                    path = path.joinpath(
-                        self.general_config_tracker.model_name_sanitized
-                    )
->>>>>>> main
                 path.mkdir(parents=True, exist_ok=True)
                 
                 self.date_id = datetime.now().isoformat().replace(":", "-")
