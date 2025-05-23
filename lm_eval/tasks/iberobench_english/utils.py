@@ -10,6 +10,15 @@ def uppercase_first_letter(text):
 def process_doc_nli(dataset):
 
     def filter_fn(doc):
+        # Ensure that the premise and hypothesis are non-empty strings
+        if not (
+            isinstance(doc.get("premise"), str) and
+            isinstance(doc.get("hypothesis"), str) and
+            len(doc.get("premise").strip()) > 0 and
+            len(doc.get("hypothesis").strip()) > 0
+        ):
+            return False
+
         # There shouldn't be any final punctuation marks (except periods) in the premise or the hypothesis.
         # They're supposed to be one single sentence in order to be concatenated properly in the prompt.
         if any([punct in sent for punct in ["¡", "!", "?", "¿", "...", ":", ";"] for sent in [doc["premise"], doc["hypothesis"]]]):

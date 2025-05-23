@@ -145,6 +145,15 @@ def preprocess_function_gen(examples):
 def process_doc_nli(dataset):
 
     def filter_fn(doc):
+        # Ensure that the premise and hypothesis are non-empty strings
+        if not (
+            isinstance(doc.get("sentence1"), str) and
+            isinstance(doc.get("sentence2"), str) and
+            len(doc.get("sentence1").strip()) > 0 and
+            len(doc.get("sentence2").strip()) > 0
+        ):
+            return False
+
         # There shouldn't be any final punctuation marks (except periods) in sentence1 or sentence2.
         # They're supposed to be one single sentence in order to be concatenated properly in the prompt.
         if any([punct in sent for punct in ["¡", "!", "?", "¿", "...", ":", ";"] for sent in [doc["sentence1"], doc["sentence2"]]]):
