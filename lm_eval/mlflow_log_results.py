@@ -1,6 +1,6 @@
 import argparse
 import os
-from typing import Any, Dict, Union, Tuple
+from typing import Any, Dict, Optional, Union, Tuple
 
 import numpy as np
 import mlflow
@@ -1349,7 +1349,7 @@ RANDOM_RESULTS = {
 }
 
 
-def get_random(task, num_labels) -> float:
+def get_random(task, num_labels) -> Optional[float]:
     if task in RANDOM_RESULTS.keys():
         return RANDOM_RESULTS[task]
     if num_labels == "2":

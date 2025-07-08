@@ -428,9 +428,13 @@ class Collator:
                 batch = self.get_chunks(values, n=n, fn=batch_fn)
                 yield from batch
         elif self._group_by == "contexts":
-            # Get one sample from each key
+            # Get one sample from each key.
+            # Select longest continuation per group to ensure sufficient context logits
             values = self._reorder(
-                [value[0] for value in self._arr_with_indices.values()]
+                [
+                    max(value, key=lambda x: len(x[1][-1]))
+                    for value in self._arr_with_indices.values()
+                ]
             )
             batch = self.get_chunks(values, n=n, fn=batch_fn)
             yield from batch
@@ -830,3 +834,21 @@ def resize_image(
 
     # Perform the resize operation with the calculated dimensions
     return image.resize((new_width, new_height), resample_filter)
+
+
+def truncate_tokens(
+    tokens: List[int],
+    max_length: int,
+    tokenizer: "PreTrainedTokenizerBase",
+    strategy: str = "left",
+):
+    if strategy == "left":
+        return tokens[-max_length:]
+    elif strategy == "right":
+        return tokens[:max_length]
+    elif strategy == "middle":
+        # Truncate the middle of the sequence
+        left_length = max_length // 2
+        right_length = max_length - left_length
+        return tokens[:left_length] + tokens[-right_length:]
+    return None
