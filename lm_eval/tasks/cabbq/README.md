@@ -1,4 +1,4 @@
-# Catalan Bias Benchmark for Question Answering (EsBBQ)
+# Catalan Bias Benchmark for Question Answering (CaBBQ)
 
 ### Paper
 
