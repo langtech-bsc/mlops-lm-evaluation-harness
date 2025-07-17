@@ -35,6 +35,17 @@ It is fully parallel with the `cabbq` task group, the version in Catalan.
 `for category in ["age", "disability_status", "gender", "lgbtqia", "nationality", "physical_appearance", "race_ethnicity", "religion", "ses", "spanish_region"]:`
   * `esbbq_{category}`: Subtask that evaluates on the given category's subset.
 
+### Metrics
+
+EsBBQ is evaluated with the following 4 metrics, at the level of each subtask and with aggregated values for the entire group:
+
+* `acc_ambig`: Accuracy over ambiguous instances.
+* `acc_disambig`: Accuracy over disambiguated instances.
+* `bias_score_ambig`: Bias score over ambiguous instances.
+* `bias_score_disambig`: Bias score over disambiguated instances.
+
+See the paper for a thorough explanation and the formulas of these metrics.
+
 ### Checklist
 
 For adding novel benchmarks/datasets to the library:
