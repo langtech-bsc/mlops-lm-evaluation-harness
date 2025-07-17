@@ -10,7 +10,8 @@ task:
   - cabbq_religion
   - cabbq_ses
   - cabbq_spanish_region
-
+tag:
+  - social_bias
 aggregate_metric_list:
   - metric: "acc_ambig"
     weight_by_size: true

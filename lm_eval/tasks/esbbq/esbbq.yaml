@@ -10,7 +10,8 @@ task:
   - esbbq_religion
   - esbbq_ses
   - esbbq_spanish_region
-
+tag:
+  - social_bias
 aggregate_metric_list:
   - metric: "acc_ambig"
     weight_by_size: true
