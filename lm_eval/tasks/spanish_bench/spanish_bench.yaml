@@ -5,6 +5,7 @@ task:
   - copa_es
   - esbbq
   - escola
+  - eqbench_es
   - flores_es
   - mgsm_direct_es_spanish_bench
   - mmmlu_es
