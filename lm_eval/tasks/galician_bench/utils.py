@@ -169,6 +169,10 @@ def process_doc_nli(dataset):
         # Remove final periods in sentence1
         doc["sentence1"] = doc["sentence1"].rstrip(".")
 
+        # Drop the document if nothing is left
+        if (len(doc["sentence1"]) == 0) or (len(doc["sentence2"]) == 0):
+            return None
+
         # Lowercase the first letter in sentence2
         doc["sentence2"] = lowercase_first_letter(doc["sentence2"])
 

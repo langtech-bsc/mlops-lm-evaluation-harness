@@ -34,6 +34,10 @@ def process_doc_nli(dataset):
         # Remove periods from the end of the premise
         doc["premise"] = doc["premise"].rstrip(".")
 
+        # Drop the document if nothing is left
+        if (len(doc["premise"]) == 0) or (len(doc["hypothesis"]) == 0):
+            return None
+
         # Lowercase the first letter in the hypothesis
         doc["hypothesis"] = lowercase_first_letter(doc["hypothesis"])
 
