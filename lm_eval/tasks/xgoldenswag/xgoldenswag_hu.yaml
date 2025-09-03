@@ -1,0 +1,3 @@
+"include": "_xgoldenswag_default_yaml"
+"dataset_name": "HU"
+"task": "xgoldenswag_hu"
