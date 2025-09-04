@@ -1,10 +1,9 @@
-dataset_path: jmichaelov/blimp_nl
+dataset_path: jmichaelov/bhs
 output_type: multiple_choice
 test_split: test
-doc_to_text: ""
-target_delimiter: ""
+doc_to_text: "{{context}}"
 doc_to_target: 0
-doc_to_choice: "{{[sentence_good, sentence_bad]}}"
+doc_to_choice: "{{[ending_good, ending_bad]}}"
 num_fewshot: 0
 metric_list:
   - metric: acc
