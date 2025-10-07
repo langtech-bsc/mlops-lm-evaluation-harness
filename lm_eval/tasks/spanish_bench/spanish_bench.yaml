@@ -3,9 +3,9 @@ task:
   - belebele_spa_Latn
   - cocoteros_es
   - copa_es
+  - eqbench_es
   - esbbq
   - escola
-  - eqbench_es
   - flores_es
   - mgsm_direct_es_spanish_bench
   - mmmlu_es
@@ -19,4 +19,4 @@ task:
   - xquad_es
   - xstorycloze_es
 metadata:
-  version: 1.0
+  version: 1.1
