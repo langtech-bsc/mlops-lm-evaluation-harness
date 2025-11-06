@@ -1,0 +1,193 @@
+#!/bin/bash
+
+#SBATCH --job-name="quanteval"
+#SBATCH -D .
+#SBATCH --output=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/logs/eval.%j.log
+#SBATCH --partition=acc
+#SBATCH --qos acc_bscls
+#SBATCH --account bsc88
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:2
+#SBATCH --ntasks=2
+#SBATCH --cpus-per-task=20
+#SBATCH -t 06:00:00
+
+grep SBATCH "$0" | head -n -1 # log the SBATCH options
+
+module load screen
+
+cleanup() {
+    printf "\nRunning cleanup...\n"
+    echo "Screen name: $screen_name"
+    if [ -n "$screen_name" ]; then
+        screen -S "$screen_name" -X quit 2>/dev/null || true
+        echo "Screen $screen_name killed successfully (if it existed)."
+    fi
+    exit
+}
+
+trap cleanup SIGINT SIGTERM SIGHUP # Trap exit signals to run cleanup before exiting
+
+job_id=$SLURM_JOB_ID
+
+# ! Parse command line parameters
+model_path=""
+tokenizer_path=""
+task=""
+num_fewshot=0
+batch_size=auto
+limit=   # leave empty to not set a limit
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+
+        --model)
+        model_path="$2"
+        shift 2
+        ;;
+
+        --tokenizer)
+        tokenizer_path="$2"
+        shift 2
+        ;;
+
+        --task)
+        task="$2"
+        shift 2
+        ;;
+
+        --fewshot)
+        num_fewshot="$2"
+        shift 2
+        ;;
+
+        --batch_size)
+        batch_size=$2
+        shift 2
+        ;;
+
+        --limit)
+        limit=$2
+        shift 2
+        ;;
+
+        *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+
+    esac
+done
+
+echo "Model path: ${model_path}"
+echo "Tokenizer path: ${tokenizer_path}"
+echo "Task: ${task}"
+
+model_name=$(basename $model_path ".gguf")
+timestamp=$(date +%Y-%m-%dT%H%M-%S)
+
+# output_path=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/results/${model_name}/${num_fewshot}-shot/results_${model_path}:${task}:${timestamp}:${job_id}.json
+output_path=$HARNESS_PATH/results/${model_name}/${num_fewshot}-shot/results_${model_name}:${task}:${timestamp}:${job_id}.json
+echo "Output path: ${output_path}"
+
+# Activate virtual environment
+source /home/bsc/bsc088585/myvenv/use_venv.sh
+
+# HF settings
+export HF_HUB_OFFLINE=1
+export HF_HOME="/gpfs/projects/bsc88/hf-home"
+export TRUST_REMOTE_CODE=true
+export HF_DATASETS_TRUST_REMOTE_CODE=true
+
+# Other settings
+export LD_LIBRARY_PATH=/apps/ACC/CUDA/12.3/targets/x86_64-linux/lib/stubs/:$LD_LIBRARY_PATH
+export NUMBA_CACHE_DIR=./cache_numba
+export TORCHDYNAMO_SUPPRESS_ERRORS=True
+export MLCONFIGDIR=/gpfs/scratch/bsc88/bsc088532/.cache/matplotlib
+export NUMEXPR_MAX_THREADS=64
+
+# Launch the model server in a detached screen first
+screen_name=model_server_${job_id}_$$
+server_script=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/py_llama_cpp_serve.sh
+server_log_file=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/logs/model_server.${job_id}.log
+echo "Model server logs: $server_log_file"
+
+server_args="--model ${model_path}"
+if [ -n "$tokenizer_path" ]; then
+    server_args="$server_args --tokenizer ${tokenizer_path}"
+fi
+
+for port in $(seq 8000 9000); do
+    lockfile="/tmp/llama_cpp_server.port_${port}.lock"
+    exec 200>"$lockfile"
+
+    if flock -n 200; then
+        # Lock acquired; now check if port is free
+        if ! lsof -i :$port &>/dev/null; then
+            echo "Lock acquired and port ${port} is free; trying to launch server..."
+            final_server_args="$server_args --port ${port}"
+            echo "Server args: ${final_server_args}"
+            
+            screen -dmS $screen_name bash -c "bash ${server_script} ${final_server_args} >> ${server_log_file} 2>&1"
+
+            echo "Sleeping for 10s to wait for server to start up..."
+            sleep 10
+
+            # Check that the server is up
+            http_status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 1 http://127.0.0.1:${port}/v1/models)
+            if [ "$http_status" == "200" ]; then
+                echo "Server started successfully on port ${port}."
+                break # Exit the loop
+            else
+                echo "ERROR: Server failed to start on port ${port}. Trying next available port..."
+                echo "Trying next available port..."
+            fi
+        # else
+            # echo "Port ${port} is already in use, releasing lock..."
+        fi
+    # else
+        # echo "Port ${port} is locked by another process, skipping..."
+    fi
+done
+
+# Check if the screen is up
+if ! screen -ls | grep -q "\.${screen_name}[[:space:]]*(Detached)"; then
+    echo "Error: The server screen '$screen_name' is not active, meaning the server failed to launch."
+    exit 1
+fi
+
+cd /gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/
+
+# Define arguments to pass to lm_eval
+common_args="--tasks ${task} \
+    --num_fewshot ${num_fewshot} \
+    --batch_size ${batch_size} \
+    --output_path ${output_path} \
+    --seed 1234 \
+    --log_samples \
+    --verbosity DEBUG \
+    --model gguf \
+    --model_args base_url=http://0.0.0.0:${port}"
+
+if [ ! -z "${limit}" ]; then
+    common_args="$common_args --limit $limit"
+fi
+
+# Set up nvidia-smi monitoring and launch the evaluation
+smi_log_file=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/logs/smi.${job_id}.log
+time_log_file=/gpfs/projects/bsc88/mlops-lm-evaluation-harness/quanteval/logs/time.${job_id}.log
+
+echo "Nvidia SMI logs: $smi_log_file"
+echo "Time logs: $time_log_file"
+
+echo "Launching evaluation with nvidia-smi and time monitoring..."
+nvidia-smi \
+    --query-gpu=timestamp,index,memory.used,utilization.gpu,utilization.memory \
+    --format=csv -l 1 > $smi_log_file & 
+
+SMI_PID=$!
+
+/usr/bin/time -v -o ${time_log_file} -v python -m lm_eval ${common_args}
+
+kill $SMI_PID

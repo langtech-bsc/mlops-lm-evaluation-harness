@@ -17,6 +17,14 @@ def get_result(logprobs, context_length):
     offsets = logprobs["text_offset"]
     tokens = logprobs["tokens"]
     tokens_logprobs = logprobs["token_logprobs"]
+    top_logprobs = logprobs["top_logprobs"]
+
+    # Fix: remove the first None if present (llama.cpp first token issue)
+    if tokens_logprobs and tokens_logprobs[0] is None:
+        logger.warning("Removing the first value in `tokens`, `tokens_logprobs` and `top_logprobs` because it is an empty token.")
+        tokens = tokens[1:]
+        tokens_logprobs = tokens_logprobs[1:]
+        top_logprobs = top_logprobs[1:]
 
     idx = 0
     while offsets[idx] < context_length:
@@ -24,8 +32,9 @@ def get_result(logprobs, context_length):
     continuation_logprobs = sum(tokens_logprobs[idx:-1])
     for i in range(idx, len(tokens)):
         token = tokens[i]
-        top_tokens = logprobs["top_logprobs"][i]
+        top_tokens = top_logprobs[i]
         top_token = max(top_tokens.keys(), key=lambda x: top_tokens[x])
+
         if top_token != token:
             is_greedy = False
             break
