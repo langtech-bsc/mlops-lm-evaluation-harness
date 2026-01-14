@@ -24,5 +24,6 @@ task:
     - xnli_va
     - xquad_ca
     - xstorycloze_ca
+    - truthfulqa_va
 metadata:
-  version: 2.1
+  version: 2.2
