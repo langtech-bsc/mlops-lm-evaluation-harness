@@ -26,4 +26,4 @@ task:
     - xstorycloze_ca
     - truthfulqa_va
 metadata:
-  version: 2.2
+  version: 2.3
