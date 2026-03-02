@@ -1,0 +1,21 @@
+tag: cabreu_inst
+dataset_path: projecte-aina/caBreu
+dataset_name: null
+output_type: generate_until
+test_split: test
+training_split: train
+validation_split: validation
+process_docs: !function ../catalan_bench/utils.process_doc_cabreu
+generation_kwargs:
+  do_sample: false
+  max_gen_toks: 8191
+  until: []
+metric_list:
+  - metric: bleu
+    aggregation: bleu
+    higher_is_better: true
+  - metric: !function ../catalan_bench/utils.rouge1
+    aggregation: !function ../catalan_bench/utils.rouge1_agg
+    higher_is_better: true
+metadata:
+  version: 1.0

@@ -1,0 +1,24 @@
+task: summarization_gl_inst
+dataset_path: proxectonos/summarization_gl
+output_type: generate_until
+test_split: test
+training_split: train
+validation_split: validation
+fewshot_split: train
+process_docs: !function ../galician_bench/utils.process_summarization
+doc_to_text: 'Texto: {{text}}
+
+  Resumo:'
+doc_to_target: '{{summary}}'
+generation_kwargs:
+  until: []
+  max_gen_toks: 1024
+metric_list:
+  - metric: bleu
+    aggregation: bleu
+    higher_is_better: true
+  - metric: !function ../galician_bench/utils.rouge1
+    aggregation: !function ../galician_bench/utils.rouge1_agg
+    higher_is_better: true
+metadata:
+  version: 1.0
