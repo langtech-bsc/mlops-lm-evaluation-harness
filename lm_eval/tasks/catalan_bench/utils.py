@@ -85,7 +85,6 @@ def process_results_coqcat(doc, results):
     else:
         em_sum += max(squad_metrics.compute_exact(a, pred) for a in gold_list)
         f1_sum += max(squad_metrics.compute_f1(a, pred) for a in gold_list)
-    # import code; code.interact(local=dict(globals(), **locals()))
     return {
         "em": em_sum / max(1, len(gold_list)),
         "f1": f1_sum / max(1, len(gold_list)),
@@ -95,7 +94,6 @@ def process_results_coqcat(doc, results):
 def process_results_qa(doc, results):
     preds = results[0]
     reference = doc["answers"][0]["text"]
-    # import code; code.interact(local=dict(globals(), **locals()))
     f1_sum = squad_metrics.compute_f1(reference, preds)
     exact_match = squad_metrics.compute_exact(reference, preds)
     return {"f1": f1_sum, "exact_match": exact_match}

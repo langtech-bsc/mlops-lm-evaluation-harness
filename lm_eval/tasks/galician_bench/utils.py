@@ -1,11 +1,9 @@
 import re
-from itertools import product
 
 import datasets
 import evaluate
 import numpy as np
 import sacrebleu
-import transformers.data.metrics.squad_metrics as squad_metrics
 from rouge_score import rouge_scorer, scoring
 
 from lm_eval.utils import general_detokenize
@@ -97,7 +95,6 @@ def rouge1_agg(items):
     refs = list(zip(*items))[0]
     preds = list(zip(*items))[1]
     rouge_scorer = evaluate.load("rouge")
-    # import code; code.interact(local=dict(globals(), **locals()))
     return rouge_scorer.compute(predictions=preds, references=refs)["rouge1"]
 
 
