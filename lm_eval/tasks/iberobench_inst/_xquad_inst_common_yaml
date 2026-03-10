@@ -6,7 +6,7 @@ output_type: generate_until
 validation_split: validation
 doc_to_text: null
 doc_to_target: '{{answers["text"][0]}}'
-process_results: !function ../xquad/utils.process_results_qa
+process_results: !function utils.process_results_xquad
 target_delimiter: ' '
 generation_kwargs:
   until:

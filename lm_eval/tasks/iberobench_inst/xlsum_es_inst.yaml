@@ -10,7 +10,7 @@ test_split: test
 training_split: train
 validation_split: validation
 fewshot_split: train
-process_docs: !function ../spanish_bench/utils.process_xlsum
+process_docs: !function utils.process_xlsum
 generation_kwargs:
   until: []
   max_gen_toks: 1024
@@ -18,8 +18,8 @@ metric_list:
   - metric: bleu
     aggregation: bleu
     higher_is_better: true
-  - metric: !function ../spanish_bench/utils.rouge1
-    aggregation: !function ../spanish_bench/utils.rouge1_agg
+  - metric: !function utils.rouge1
+    aggregation: !function utils.rouge1_agg
     higher_is_better: true
 metadata:
   version: 1.0

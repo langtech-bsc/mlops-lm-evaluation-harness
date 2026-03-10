@@ -2,6 +2,11 @@ import re
 
 import evaluate
 
+from lm_eval.tasks.catalan_bench.utils import process_doc_cabreu
+from lm_eval.tasks.xquad.utils import process_results_qa as process_results_xquad
+from lm_eval.tasks.catalan_bench.utils import process_results_qa as process_results_xquad_ca
+from lm_eval.tasks.galician_bench.utils import process_summarization
+from lm_eval.tasks.spanish_bench.utils import process_xlsum
 
 def process_xsum(dataset):
     def _process_doc(doc):

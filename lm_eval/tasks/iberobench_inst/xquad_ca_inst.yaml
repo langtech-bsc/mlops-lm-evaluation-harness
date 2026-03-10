@@ -7,7 +7,7 @@ doc_to_target: '{{answers[0]["text"]}}'
 validation_split: null
 test_split: test
 target_delimiter: ' '
-process_results: !function ../catalan_bench/utils.process_results_qa
+process_results: !function utils.process_results_xquad_ca
 generation_kwargs:
   until:
     - "\n\n"
