@@ -1,0 +1,18 @@
+group: aliaboost_ff_es
+task:
+  - aliaboost_ff_csv_es
+  - aliaboost_ff_json_es
+  - aliaboost_ff_xml_es
+  - aliaboost_ff_yaml_es
+aggregate_metric_list:
+  - metric: format_validity
+    aggregation: mean
+    weight_by_size: true # micro-average (over all instances)
+  - metric: missing_start_marker_rate
+    aggregation: mean
+    weight_by_size: true
+  - metric: missing_end_marker_rate
+    aggregation: mean
+    weight_by_size: true
+metadata:
+  version: 1.0

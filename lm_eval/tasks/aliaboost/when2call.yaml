@@ -1,0 +1,32 @@
+task: aliaboost_when2call_es
+dataset_path: langtech-languagemodeling/aliaboost_when2call_es
+dataset_kwargs:
+  streaming: false
+output_type: generate_until
+generation_kwargs:
+  until: []
+  max_gen_toks: 4096
+  temperature: 0
+test_split: test
+training_split: null
+validation_split: null
+fewshot_split: null
+num_fewshot: 0
+process_docs: !function when2call.process_docs
+description: system_prompt
+doc_to_text: question
+doc_to_target: ""
+target_delimiter: ""
+process_results: !function when2call.process_results
+metric_list:
+  - metric: trigger_f1
+    aggregation: !function when2call.agg_trigger_f1
+    higher_is_better: true
+  - metric: trigger_acc
+    aggregation: !function when2call.agg_trigger_acc
+    higher_is_better: true
+  - metric: tool_call_validity
+    aggregation: !function when2call.agg_tool_call_validity
+    higher_is_better: true
+metadata:
+  version: 1.0

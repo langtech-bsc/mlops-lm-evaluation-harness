@@ -1,0 +1,3 @@
+include: _format_following_common_yaml
+task: aliaboost_ff_xml_es
+dataset_name: xml
