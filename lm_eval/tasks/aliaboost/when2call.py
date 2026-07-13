@@ -1,4 +1,5 @@
 import json
+import re
 
 import jsonschema
 import numpy as np
@@ -6,49 +7,22 @@ from datasets import Dataset
 from sklearn.metrics import f1_score
 
 
-DEFAULT_SYSTEM_PROMPT = """You are a helpful AI assistant. 
-You have access to the following tools described in <tool></tool> which you can use to answer the user's questions.
-Only use a tool if it directly answers the user's question."""
-
-TOOL_USE_INSTRUCTIONS = """To use a tool, return JSON in the following format:
-{"name": "tool_name", "arguments": {"argument1": "value1", "argument2": "value2", ...}}"""
-
-def format_tool_list_string(tool_list: list[str]) -> str:
-    tool_strings = [f"<tool>{tool}</tool>" for tool in tool_list]
-    return "\n\n".join(tool_strings)
-
 def process_docs(dataset: Dataset) -> Dataset:
     def _process_doc(item: dict) -> dict:
-        # Prepare the system prompt so that it can be accessed in the task YAML
-        tool_list_string = format_tool_list_string(item["tools"])
-        item["system_prompt"] = f"{DEFAULT_SYSTEM_PROMPT}\n\n{TOOL_USE_INSTRUCTIONS}\n\n{tool_list_string}"
+
+        # The description is used not as a final system prompt but rather to smuggle instance-specific chat template arguments to the model engine
+        # (They will be processed in huggingface.py)
+        item["description"] = json.dumps({"chat_template_args": {"tools": item['tools']}})
         return item
 
     return dataset.map(_process_doc)
 
-def extract_jsons(model_answer):
-    # Normalize "smart quotes" to standard straight quotes
-    model_answer = model_answer.replace('“', '"').replace('”', '"').replace(' ', ' ')
-
-    results = []
-    stack = 0
-    start_index = None
-
-    for i, char in enumerate(model_answer):
-        if char == '{':
-            if stack == 0:
-                start_index = i
-            stack += 1
-        elif char == '}':
-            stack -= 1
-            if stack == 0 and start_index is not None:
-                candidate = model_answer[start_index:i+1]
-                try:
-                    results.append(json.loads(candidate))
-                except json.JSONDecodeError:
-                    pass 
-
-    return results
+def validate_json(content) -> bool:
+    try:
+        json.loads(content)
+        return True
+    except:
+        return False
 
 def standardize_json_schema(obj: dict):
     if isinstance(obj, dict):
@@ -85,19 +59,20 @@ def find_tool_call(model_answer: str) -> dict:
     Check a raw response from the model to find valid JSONs and check that they have the required keys.
     """
 
-    # Extract all JSONs from the raw answer
-    jsons_in_model_response = extract_jsons(model_answer)
+    # Extract content between <tool_call> tags from the raw answer
+    potential_calls = re.findall(r"<tool_call>(.*?)</tool_call>", model_answer, re.DOTALL)
 
     # There should be exactly one tool call
-    if len(jsons_in_model_response) != 1:
+    if len(potential_calls) != 1:
         return None
 
-    # Validate that the keys are also correct to consider it a tool call
-    potential_tool_call = jsons_in_model_response[0]
-    if set(potential_tool_call.keys()) == {"name", "arguments"}:
-        return potential_tool_call
-
-    return None
+    # Check that the content is JSON and contains the required keys
+    try:
+        call_content = json.loads(potential_calls[0])
+        if set(call_content.keys()) == {"name", "arguments"}:
+            return call_content
+    except:
+        return None
 
 def process_results(doc, results):
 
