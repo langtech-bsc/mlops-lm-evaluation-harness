@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 from datetime import timedelta
@@ -1722,13 +1723,26 @@ class HFLM(TemplateLM):
         self, chat_history: list[dict[str, str]], add_generation_prompt: bool = True
     ) -> str:
         """Method to apply a chat template to a list of chat history between user and model."""
+
+        chat_template_args = self.chat_template_args
+
+        # Get chat_template_args from the system prompt in the conversation history and pass them as arguments to the chat template
+        if chat_history[0]["role"] == "system" and "chat_template_args" in chat_history[0]["content"]:
+            ct_args_from_inst = json.loads(chat_history[0]["content"])["chat_template_args"]
+
+            if "tools" in ct_args_from_inst and isinstance(ct_args_from_inst["tools"], list):
+                ct_args_from_inst["tools"] = list(map(json.loads, ct_args_from_inst["tools"]))
+
+            chat_template_args.update(ct_args_from_inst)
+            chat_history.pop(0)
+
         try:
             chat_templated = self.tokenizer.apply_chat_template(
                 chat_history,
                 tokenize=False,
                 add_generation_prompt=add_generation_prompt,
                 continue_final_message=not add_generation_prompt,
-                **self.chat_template_args,
+                **chat_template_args,
             )
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(

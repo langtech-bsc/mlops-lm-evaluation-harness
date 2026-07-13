@@ -1,0 +1,32 @@
+# Common YAML for the format_following_{csv,json,xml,yaml} subtasks
+
+dataset_path: langtech-languagemodeling/aliaboost_format_following_es
+dataset_name: null
+output_type: generate_until
+generation_kwargs:
+  until: []
+  max_gen_toks: 4096
+  temperature: 0
+test_split: test
+description: >
+  Eres una herramienta de generación de datos estructurados. Escribe el **documento más corto posible** que cumpla con los requisitos del usuario. Debes comenzar tu respuesta con un bloque de código Markdown, por ejemplo, ```json, ```csv, ```yaml o ```xml. Debes cerrar el bloque de código con ``` y finalizar tu respuesta inmediatamente. NO añadas más texto después del bloque de código.
+doc_to_text: "{{prompt}}"
+doc_to_target: "{{format}}" # The format is passed as target to be used when evaluating the response
+process_results: !function format_following.process_results
+num_fewshot: 0
+filter_list:
+  - name: extract_code
+    filter:
+      - function: !function format_following.ExtractCodeFilter
+metric_list:
+  - metric: format_validity
+    aggregation: mean
+    higher_is_better: true
+  - metric: missing_start_marker_rate
+    aggregation: mean
+    higher_is_better: false
+  - metric: missing_end_marker_rate
+    aggregation: mean
+    higher_is_better: false
+metadata:
+  version: 1.0
