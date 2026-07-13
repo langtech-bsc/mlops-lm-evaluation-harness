@@ -4,7 +4,6 @@ dataset_kwargs:
   streaming: false
 output_type: generate_until
 generation_kwargs:
-  until: []
   max_gen_toks: 4096
   temperature: 0
 test_split: test
@@ -13,7 +12,7 @@ validation_split: null
 fewshot_split: null
 num_fewshot: 0
 process_docs: !function when2call.process_docs
-description: system_prompt
+description: description # This will not be the final system prompt; it's only used to "smuggle" instance-specific chat template arguments to the model engine
 doc_to_text: question
 doc_to_target: ""
 target_delimiter: ""
@@ -29,4 +28,4 @@ metric_list:
     aggregation: !function when2call.agg_tool_call_validity
     higher_is_better: true
 metadata:
-  version: 1.0
+  version: 2.0
