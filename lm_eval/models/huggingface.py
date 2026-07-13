@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from datetime import timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
@@ -1533,17 +1534,33 @@ class HFLM(TemplateLM):
     ) -> str:
         """Method to apply a chat template to a list of chat history between user and model."""
 
+        # Initialize chat template args from the class initialization arguments
         chat_template_args = self.chat_template_args
 
-        # Get chat_template_args from the system prompt in the conversation history and pass them as arguments to the chat template
-        if chat_history[0]["role"] == "system" and "chat_template_args" in chat_history[0]["content"]:
-            ct_args_from_inst = json.loads(chat_history[0]["content"])["chat_template_args"]
+        # Get instance-specific chat template arguments smuggled as system prompt in the conversation history and pass them to the chat template
+        try:
+            if (
+                chat_history[0]["role"] == "system" and
+                isinstance(chat_history[0]["content"], str) and
+                chat_history[0]["content"].strip().startswith("{") and
+                chat_history[0]["content"].strip().endswith("}") and
+                re.search(r"""(['"])chat_template_args\1""", chat_history[0]["content"]) # contains "chat_template_args" or 'chat_template_args' (with quotes)
+            ):
+                ct_args_from_inst = json.loads(chat_history[0]["content"]).get("chat_template_args", {})
 
-            if "tools" in ct_args_from_inst and isinstance(ct_args_from_inst["tools"], list):
-                ct_args_from_inst["tools"] = list(map(json.loads, ct_args_from_inst["tools"]))
+                # If the args include a list of (stringified) tools, parse them into JSONs
+                if "tools" in ct_args_from_inst and isinstance(ct_args_from_inst["tools"], list):
+                    ct_args_from_inst["tools"] = list(map(json.loads, ct_args_from_inst["tools"]))
 
-            chat_template_args.update(ct_args_from_inst)
-            chat_history.pop(0)
+                chat_template_args.update(ct_args_from_inst)
+
+                # Remove the fake system prompt from the chat history
+                chat_history.pop(0)
+
+        except:
+            eval_logger.warning(
+                "Failed to parse chat template args JSON in system message."
+            )
 
         try:
             chat_templated = self.tokenizer.apply_chat_template(
