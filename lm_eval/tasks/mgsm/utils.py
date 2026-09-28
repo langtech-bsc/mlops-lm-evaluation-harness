@@ -1,4 +1,6 @@
 import argparse
+import re
+from typing import Any
 
 import yaml
 
@@ -94,6 +96,27 @@ LANGUAGES = {
 }
 
 
+def process_results(doc: dict[str, Any], results: list[str]) -> dict[str, int]:
+    """Return legacy numeric exact match and Math-Verify scores for MGSM."""
+    from math_verify import parse, verify
+
+    response = results[0]
+    target = str(doc["answer_number"])
+
+    match = re.search(r"(-?[$0-9.,]{2,})|(-?[0-9]+)", response)
+    extracted = match.group(0) if match else response
+    normalized_extracted = extracted.replace(",", "").replace("$", "").strip()
+    normalized_target = target.replace(",", "").replace("$", "").strip()
+    exact_match = int(normalized_extracted == normalized_target)
+
+    try:
+        math_verify = int(verify(gold=parse(target), target=parse(response)))
+    except Exception:
+        math_verify = 0
+
+    return {"exact_match": exact_match, "math_verify": math_verify}
+
+
 def add_regex_pattern(regex_pattern):
     if regex_pattern is None:
         return {}
@@ -148,6 +171,11 @@ def gen_lang_yamls(output_dir: str, overwrite: bool, mode: str) -> None:
                 REGEX = None
                 task_name = f"mgsm_direct_{lang}"
                 yaml_template = "direct_yaml"
+            elif mode == "direct-instruct":
+                ANSWER = LANGUAGES[lang]["DIRECT"]
+                REGEX = None
+                task_name = f"mgsm_direct_instruct_{lang}"
+                yaml_template = "direct_instruct_yaml"
             elif mode == "native-cot":
                 ANSWER = LANGUAGES[lang]["ANSWER"]
                 REGEX = LANGUAGES[lang]["REGEX"]
@@ -158,6 +186,13 @@ def gen_lang_yamls(output_dir: str, overwrite: bool, mode: str) -> None:
                 ANSWER = LANGUAGES["en"]["ANSWER"]
                 REGEX = LANGUAGES["en"]["REGEX"]
                 task_name = f"mgsm_en_cot_{lang}"
+
+            generation_kwargs = {"do_sample": False}
+            if mode == "direct-instruct":
+                generation_kwargs["until"] = []
+                generation_kwargs["max_gen_toks"] = 8191
+            else:
+                generation_kwargs["until"] = [QUESTION, "</s>", "<|im_end|>"]
 
             file_name = f"{task_name}.yaml"
             ANSWER_TO_SKIP = len(LANGUAGES[lang]["ANSWER"]) + 1
@@ -181,10 +216,7 @@ def gen_lang_yamls(output_dir: str, overwrite: bool, mode: str) -> None:
                         f"""{{{{answer_number|string}}}}"""
                         f"""{{% endif %}}""",
                         **filter_list,
-                        "generation_kwargs": {
-                            "until": [QUESTION, "</s>", "<|im_end|>"],
-                            "do_sample": False,
-                        },
+                        "generation_kwargs": generation_kwargs,
                         **({"target_delimiter": DELIMITER} if DELIMITER else {}),
                     },
                     f,
@@ -216,7 +248,7 @@ def main() -> None:
     parser.add_argument(
         "--mode",
         default="native-cot",
-        choices=["direct", "native-cot", "en-cot"],
+        choices=["direct", "direct-instruct", "native-cot", "en-cot"],
         help="Mode of chain-of-thought",
     )
     args = parser.parse_args()

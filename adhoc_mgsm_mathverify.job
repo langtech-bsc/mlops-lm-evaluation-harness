@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Ad hoc replacement for failed job 46087931.
+# Evaluates only the generated MGSM Math-Verify task family.
+#SBATCH --job-name=mgsm-mv-adhoc
+#SBATCH --output=/gpfs/projects/bsc88/text/models/instruction-tuning/evaluation-it/harness/logs/%x_%A_%a.log
+#SBATCH --partition=acc
+#SBATCH --qos=acc_resa
+#SBATCH --account=cns107
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:4
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=500G
+#SBATCH --array=0-1
+#SBATCH --time=20:00:00
+
+set -euo pipefail
+
+HARNESS_PATH="/gpfs/scratch/bsc88/bsc068905/mlops-lm-evaluation-harness"
+RESULTS_ROOT="/gpfs/projects/bsc88/mlops-lm-evaluation-harness/production/results"
+
+MODEL_PATHS=(
+  "/gpfs/scratch/bsc88/text/posttraining/rl-training/experiments/salamandra7b-rar/default/checkpoints/hf/iter_0000149_salamandra7b-rar_cispo_lr1e-6_gbs2048_nsp64_temp0.7_hf"
+  "/gpfs/projects/bsc88/text/models/post-training_models/post-trained/Salamandra-7b_pre-1.4_sft-6.0_dpo-5.0"
+)
+
+cd "$HARNESS_PATH"
+
+export HF_HUB_OFFLINE=1
+export HF_HOME="/gpfs/projects/bsc88/hf-home"
+export TRUST_REMOTE_CODE=true
+export HF_DATASETS_TRUST_REMOTE_CODE=true
+
+source /gpfs/projects/bsc88/text/environments/eval_harness_mn5_python3.12_20251027/use_venv.sh
+
+model_path="${MODEL_PATHS[$SLURM_ARRAY_TASK_ID]}"
+model_name="$(basename "$model_path")"
+output_dir="$RESULTS_ROOT/$model_name/0-shot"
+output_path="$output_dir/results:${model_name}:mgsm_direct_instruct:0-shot_${SLURM_JOB_ID}.json"
+
+mkdir -p "$output_dir"
+
+python -m lm_eval \
+  --tasks mgsm_direct_instruct \
+  --num_fewshot 0 \
+  --batch_size 1 \
+  --output_path "$output_path" \
+  --log_samples \
+  --seed 1234 \
+  --model hf \
+  --model_args "pretrained=${model_path},trust_remote_code=True,parallelize=True" \
+  --trust_remote_code \
+  --apply_chat_template
