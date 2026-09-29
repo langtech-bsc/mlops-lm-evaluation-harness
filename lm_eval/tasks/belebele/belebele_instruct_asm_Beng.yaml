@@ -1,5 +1,0 @@
-"dataset_name": "asm_Beng"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_asm_Beng"
-"test_split": "test"

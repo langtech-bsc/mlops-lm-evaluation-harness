@@ -1,5 +1,0 @@
-"dataset_name": "por_Latn"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_por_Latn"
-"test_split": "test"

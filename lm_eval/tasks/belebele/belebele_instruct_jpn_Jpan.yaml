@@ -1,5 +1,0 @@
-"dataset_name": "jpn_Jpan"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_jpn_Jpan"
-"test_split": "test"

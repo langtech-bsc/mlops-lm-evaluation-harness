@@ -1,5 +1,0 @@
-"dataset_name": "snd_Arab"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_snd_Arab"
-"test_split": "test"
