@@ -43,7 +43,7 @@ if __name__ == "__main__":
         return response.json()["splits"]
 
     print(query())
-    languages = [split["config"] for split in query()]
+    languages = [split["split"] for split in query()]
 
     for lang in tqdm([lang for lang in languages if "default" not in lang]):
         yaml_dict = {
@@ -51,9 +51,8 @@ if __name__ == "__main__":
             "task": f"belebele_{args.task_prefix}_{lang}"
             if args.task_prefix != ""
             else f"belebele_{lang}",
-            "dataset_name": lang,
-            "test_split": "test",
-            "fewshot_split": "test",
+            "test_split": lang,
+            "fewshot_split": lang,
         }
 
         file_save_path = args.save_prefix_path + f"_{lang}.yaml"

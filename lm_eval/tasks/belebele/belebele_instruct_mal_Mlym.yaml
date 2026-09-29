@@ -1,5 +1,0 @@
-"dataset_name": "mal_Mlym"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_mal_Mlym"
-"test_split": "test"

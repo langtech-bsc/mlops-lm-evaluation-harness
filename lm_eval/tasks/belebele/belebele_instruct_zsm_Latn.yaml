@@ -1,5 +1,0 @@
-"dataset_name": "zsm_Latn"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_zsm_Latn"
-"test_split": "test"

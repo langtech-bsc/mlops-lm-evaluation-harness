@@ -1,5 +1,0 @@
-"dataset_name": "kat_Geor"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_kat_Geor"
-"test_split": "test"

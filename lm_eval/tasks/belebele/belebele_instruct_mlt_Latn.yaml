@@ -1,5 +1,0 @@
-"dataset_name": "mlt_Latn"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_mlt_Latn"
-"test_split": "test"

@@ -1,5 +1,0 @@
-"dataset_name": "kaz_Cyrl"
-"fewshot_split": "test"
-"include": "_instruct_template_yaml"
-"task": "belebele_instruct_kaz_Cyrl"
-"test_split": "test"
