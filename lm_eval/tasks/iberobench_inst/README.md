@@ -21,7 +21,7 @@ These variants preserve multiple-choice likelihood evaluation. They add an expli
 | ARC Easy/Challenge | `arc_{easy,challenge}_instruct`, `arc_ca_{easy,challenge}_instruct`, `arc_es_{easy,challenge}_instruct` | English, Catalan, Spanish | Localized question/choice labels and instructions; scores the original answer labels. |
 | Belebele | `belebele_{eng,cat,spa}_Latn_instruct` | English, Catalan, Spanish | Uses a shared local template and scores A/B/C/D after `<answer>`. Passage and question content remain unchanged. |
 | HellaSwag | `hellaswag_instruct` | English | Makes the four endings explicit labeled choices while retaining canonical HellaSwag preprocessing and `acc`/`acc_norm`. |
-| MMMLU | `mmmlu_es_instruct` | Spanish | Uses a Spanish instruction and prompt; scores A/B/C/D with the original MMMLU target mapping. |
+| MMLU / MMMLU | `mmlu_en_instruct`, `mmmlu_es_instruct` | English, Spanish | Uses localized instructions and prompts and scores A/B/C/D after `<answer>`. English uses the aggregate `all` configuration from `cais/mmlu`; Spanish uses the `ES_LA` translation from `openai/MMMLU`. |
 | OpenBookQA | `openbookqa_instruct`, `openbookqa_ca_instruct`, `openbookqa_es_instruct` | English, Catalan, Spanish | Localized instructions and labeled choices; preserves the source splits, targets, decontamination query, and accuracy metrics. |
 | Social IQA | `social_iqa_instruct`, `siqa_ca_instruct`, `siqa_es_instruct` | English, Catalan, Spanish | Localized context/question/choice prompts and constrained A/B/C scoring; preserves each dataset’s original validation split. |
 
