@@ -23,7 +23,6 @@ Adding New Models
 """
 
 MODEL_MAPPING = {
-    "cached-rollouts": "lm_eval.models.cached_rollouts:CachedRollouts",
     "anthropic-chat": "lm_eval.models.anthropic_llms:AnthropicChat",
     "anthropic-chat-completions": "lm_eval.models.anthropic_llms:AnthropicChat",
     "anthropic-completions": "lm_eval.models.anthropic_llms:AnthropicLM",
