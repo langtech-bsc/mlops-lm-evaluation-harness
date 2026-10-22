@@ -1,0 +1,3 @@
+include: _multinrc_es.yaml
+task: multinrc_es_cultural
+process_docs: !function utils.process_cultural

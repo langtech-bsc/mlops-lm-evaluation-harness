@@ -1,0 +1,14 @@
+group: multi_wiki_qa
+task:
+  - multi_wiki_qa_ca
+  - multi_wiki_qa_es
+  - multi_wiki_qa_en
+aggregate_metric_list:
+  - metric: acc
+    weight_by_size: false
+  - metric: exact_match
+    weight_by_size: false
+  - metric: f1
+    weight_by_size: false
+metadata:
+  version: 1.0

@@ -1,0 +1,14 @@
+group: arxivmath_2026
+task:
+  - arxivmath_0626
+  - arxivmath_0826
+  - arxivmath_0926
+aggregate_metric_list:
+  - metric: acc
+    weight_by_size: true
+  - metric: exact_match
+    weight_by_size: true
+  - metric: math_verify
+    weight_by_size: true
+metadata:
+  version: 1.0

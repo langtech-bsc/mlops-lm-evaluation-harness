@@ -1,0 +1,10 @@
+group: aime_2024_2026
+task:
+  - aime24
+  - aime25
+  - aime26
+aggregate_metric_list:
+  - metric: exact_match
+    weight_by_size: true
+metadata:
+  version: 1.0

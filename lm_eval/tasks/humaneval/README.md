@@ -1,5 +1,12 @@
 # HumanEval
 
+## Catalan translation
+
+`humaneval_ca` evaluates the locally validated Catalan translation stored at
+`/gpfs/scratch/bsc88/bsc160865/dataset_translation/humaneval_ca/` on MN5. It
+uses the original executable tests and the same pass@1 implementation as
+`humaneval`. Set `HF_ALLOW_CODE_EVAL=1` only inside an appropriate sandbox.
+
 ## Paper
 Evaluating Large Language Models Trained on Code
 https://arxiv.org/abs/2107.03374

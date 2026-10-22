@@ -1,0 +1,3 @@
+include: _arxivmath_2026.yaml
+task: arxivmath_0926
+dataset_path: MathArena/arxivmath-0926

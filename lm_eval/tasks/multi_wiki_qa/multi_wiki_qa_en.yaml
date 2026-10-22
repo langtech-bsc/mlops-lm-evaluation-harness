@@ -1,0 +1,4 @@
+include: _multi_wiki_qa.yaml
+task: multi_wiki_qa_en
+dataset_name: en
+process_docs: !function utils.process_en

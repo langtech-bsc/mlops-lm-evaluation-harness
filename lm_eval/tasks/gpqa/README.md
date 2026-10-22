@@ -1,5 +1,13 @@
 # GPQA
 
+## Catalan translation
+
+`gpqa_diamond_ca_zeroshot` evaluates the locally validated Catalan Diamond
+translation stored at
+`/gpfs/scratch/bsc88/bsc160865/dataset_translation/gpqa_ca/` on MN5. It uses
+the same shuffled-choice preprocessing and accuracy metrics as the English
+zero-shot task.
+
 ### Paper
 
 Title: GPQA: A Graduate-Level Google-Proof Q&A Benchmark

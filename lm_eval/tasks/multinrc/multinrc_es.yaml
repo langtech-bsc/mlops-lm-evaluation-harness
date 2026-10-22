@@ -1,0 +1,11 @@
+group: multinrc_es
+task:
+  - multinrc_es_cultural
+  - multinrc_es_math
+  - multinrc_es_wordplay
+  - multinrc_es_linguistic
+aggregate_metric_list:
+  - metric: acc
+    weight_by_size: true
+metadata:
+  version: 1.0
