@@ -7,6 +7,10 @@
 uses the original executable tests and the same pass@1 implementation as
 `humaneval`. Set `HF_ALLOW_CODE_EVAL=1` only inside an appropriate sandbox.
 
+Use `humaneval_ca_instruct` for instruction-tuned chat models. It preserves the
+same Catalan prompts and executable tests while using the instruction prompt,
+generation prefix, and Markdown-code extraction of `humaneval_instruct`.
+
 ## Paper
 Evaluating Large Language Models Trained on Code
 https://arxiv.org/abs/2107.03374
