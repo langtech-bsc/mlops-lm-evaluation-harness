@@ -5,15 +5,11 @@ from typing import Dict, List
 def process_results(doc: dict, results: List[str]) -> Dict[str, int]:
     retval = 0
     response = results[0]
+    answer = None
 
-    # Try to extract answer from $...$ format first
-    indices = [pos for pos, char in enumerate(response) if char == "$"]
-    if len(indices) <= 1:
-        answer = response
-    else:
-        answer = response[indices[0] + 1 : indices[-1]]
-
-    # Extract from \\boxed{} if present
+    # Prefer the final boxed value. Mathematical solutions commonly contain many
+    # earlier dollar-delimited expressions, so taking everything between the
+    # first and last dollar signs does not isolate the answer.
     boxed_answer = last_boxed_only_string(response)
     if boxed_answer is not None:
         try:
@@ -22,6 +18,23 @@ def process_results(doc: dict, results: List[str]) -> Dict[str, int]:
                 answer = boxed_content
         except (AssertionError, IndexError):
             pass
+
+    # Instruction-tuned models also frequently finish with "Answer: 123"
+    # without boxing it. AIME answers are non-negative integers, so this is
+    # intentionally narrower than a general mathematical-expression parser.
+    if answer is None:
+        explicit_answers = re.findall(
+            r"(?i)(?:final\s+answer|answer)\s*(?:is\s*)?(?::|=)?\s*"
+            r"(?:\$+|\\\(|\\\[)?\s*(\d{1,})",
+            response,
+        )
+        if explicit_answers:
+            answer = explicit_answers[-1]
+
+    # Conservative fallback for responses that end directly in the integer.
+    if answer is None:
+        integers = re.findall(r"(?<![\w.])\d+(?![\w.])", response)
+        answer = integers[-1] if integers else response
 
     # Check if answer matches target
     answer_key = next(k for k in doc.keys() if k.lower() == "answer")
@@ -188,7 +201,8 @@ def strip_string(string):
     string = string.replace("^{\\circ}", "")
     string = string.replace("^\\circ", "")
 
-    # remove dollar signs
+    # remove dollar signs (both literal math delimiters and escaped currency)
+    string = string.replace("$", "")
     string = string.replace("\\$", "")
 
     # remove units (on the right)

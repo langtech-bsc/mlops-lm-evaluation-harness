@@ -140,6 +140,8 @@ class TemplateAPI(TemplateLM):
         timeout: int = 300,
         header: dict[str, str] | None = None,
         max_images: int = 1,
+        enable_thinking: bool | None = None,
+        chat_template_args: dict[str, Any] | None = None,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -193,6 +195,9 @@ class TemplateAPI(TemplateLM):
         self._eos_string = eos_string
         self.timeout = int(timeout)
         self.max_images = int(max_images)
+        self.chat_template_args = dict(chat_template_args or {})
+        if enable_thinking is not None:
+            self.chat_template_args["enable_thinking"] = enable_thinking
 
         eval_logger.info(f"Using tokenizer {self.tokenizer_backend}")
         if self.tokenizer_backend is None:
@@ -341,6 +346,7 @@ class TemplateAPI(TemplateLM):
                 tokenize=False,
                 add_generation_prompt=add_generation_prompt,
                 continue_final_message=not add_generation_prompt,
+                **self.chat_template_args,
             )
         elif self.tokenizer_backend == "remote" and self.tokenized_requests:
             return chat_history

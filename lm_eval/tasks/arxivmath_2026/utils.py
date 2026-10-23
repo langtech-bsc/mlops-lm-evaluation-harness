@@ -22,16 +22,34 @@ def _extract_answer(response: str) -> str:
     return final[-1].strip() if final else response.strip()
 
 
+def _normalize_reference(reference: str) -> str:
+    """Reduce a display equation reference to the expression being predicted."""
+    reference = reference.strip()
+    if reference.startswith("\\[") and reference.endswith("\\]"):
+        reference = reference[2:-2].strip()
+    elif reference.startswith("$$") and reference.endswith("$$"):
+        reference = reference[2:-2].strip()
+    elif reference.startswith("$") and reference.endswith("$"):
+        reference = reference[1:-1].strip()
+
+    # PHYBench references often name the requested quantity (for example,
+    # ``F_max = ...``), while models correctly return only the right-hand side.
+    if "=" in reference:
+        reference = reference.split("=", 1)[1].strip()
+    return reference
+
+
 def process_math_results(doc: dict, results: list[str]) -> dict[str, int]:
     prediction = results[0]
     extracted = _extract_answer(prediction)
-    exact = int(is_equiv(extracted, str(doc["answer"])))
+    reference = _normalize_reference(str(doc["answer"]))
+    exact = int(is_equiv(extracted, reference))
 
     verified = 0
     try:
         from math_verify import parse, verify
 
-        verified = int(verify(gold=parse(str(doc["answer"])), target=parse(prediction)))
+        verified = int(verify(gold=parse(reference), target=parse(extracted)))
     except (ImportError, ValueError, TypeError):
         verified = exact
 
