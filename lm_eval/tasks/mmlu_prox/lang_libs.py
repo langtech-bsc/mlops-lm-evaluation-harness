@@ -55,6 +55,14 @@ LANG_LIBS = {
         "A: Pensemos paso a paso.",
         "La respuesta es ({})",
     ],
+    "ca": [
+        "Pregunta:",
+        "Opcions:",
+        "Resposta: Pensem pas a pas.",
+        'Les preguntes següents són preguntes d’opció múltiple (amb respostes) sobre {subject}. Pensa pas a pas i acaba la resposta amb "{ans_suffix}", on X és la lletra de l’opció correcta.',
+        "A: Pensem pas a pas.",
+        "La resposta és ({})",
+    ],
     "pt": [
         "Pergunta:",
         "Opções:",

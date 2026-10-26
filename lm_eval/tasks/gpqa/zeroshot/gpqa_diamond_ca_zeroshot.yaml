@@ -1,10 +1,7 @@
 include: _gpqa_zeroshot_yaml
 task: gpqa_diamond_ca_zeroshot
-dataset_path: json
+dataset_path: BSC-LT/gpqa_diamond_ca
 dataset_name: null
-dataset_kwargs:
-  data_files:
-    train: /gpfs/scratch/bsc88/bsc160865/dataset_translation/gpqa_ca/gpqa_diamond_ca_full.json
 output_type: generate_until
 doc_to_text: "Quina és la resposta correcta a aquesta pregunta? {{Question}}\nOpcions:\n(A) {{choice1}}\n(B) {{choice2}}\n(C) {{choice3}}\n(D) {{choice4}}\n\nRaona breument i acaba exactament amb <answer>A</answer>, substituint A per la lletra correcta.\nResposta:"
 doc_to_choice: null

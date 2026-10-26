@@ -1,0 +1,5 @@
+description: 'Les preguntes següents són preguntes d’opció múltiple (amb respostes) sobre altres matèries. Pensa pas a pas i acaba la resposta amb "La resposta és (X)", on X és la lletra de l’opció correcta.\n\n'
+include: _ca_template_yaml
+task: mmlu_prox_ca_other
+task_alias: other
+process_docs: !function utils.process_other

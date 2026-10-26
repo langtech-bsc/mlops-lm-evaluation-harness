@@ -1,0 +1,5 @@
+description: 'Les preguntes següents són preguntes d’opció múltiple (amb respostes) sobre negocis. Pensa pas a pas i acaba la resposta amb "La resposta és (X)", on X és la lletra de l’opció correcta.\n\n'
+include: _ca_template_yaml
+task: mmlu_prox_ca_business
+task_alias: business
+process_docs: !function utils.process_business

@@ -1,11 +1,8 @@
 task: humaneval_ca
-dataset_path: json
-dataset_kwargs:
-  data_files:
-    test: /gpfs/scratch/bsc88/bsc160865/dataset_translation/humaneval_ca/openai_humaneval_ca.json
+dataset_path: BSC-LT/humaneval_ca
 unsafe_code: true
 output_type: generate_until
-test_split: test
+test_split: train
 doc_to_text: "{{prompt}}"
 doc_to_target: "{{test}}\ncheck({{entry_point}})"
 metric_list:
