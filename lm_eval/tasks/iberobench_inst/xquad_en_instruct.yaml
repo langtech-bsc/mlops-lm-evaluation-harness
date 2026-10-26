@@ -1,4 +1,4 @@
 include: _xquad_instruct_common_yaml
 task: xquad_en_instruct
-dataset_name: xquad.es
-doc_to_text: "Contexto: {{context}}\n\nPregunta: {{question}}\n\nRespuesta:"
+dataset_name: xquad.en
+doc_to_text: "Context: {{context}}\n\nQuestion: {{question}}\n\nReturn only the short answer inside <answer>...</answer>.\nAnswer:"
