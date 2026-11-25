@@ -55,10 +55,27 @@ def build_predictions(resps: list[list[str]], docs: list[dict]) -> list[list[str
 def build_predictions_instruct(
     resps: list[list[str]], docs: list[dict]
 ) -> list[list[str]]:
+    """Join instruct completions to the prompt used by code evaluation.
+
+    Salamandra sometimes emits three spaces before the first line after the
+    indented function docstring, while the prompt's docstring uses four.  The
+    resulting concatenated program raises ``IndentationError`` before the
+    candidate can be evaluated.  Normalize only this known prompt boundary;
+    indentation inside the completion is left unchanged.
+    """
+
+    def clean_response(response: str, prompt: str) -> str:
+        fence = response.find("```")
+        completion = response if fence == -1 else response[:fence]
+        if (
+            prompt.endswith('    """\n')
+            and completion.startswith("   ")
+            and not completion.startswith("    ")
+        ):
+            completion = " " + completion
+        return completion
+
     return [
-        [
-            doc["prompt"] + (r if r.find("```") == -1 else r[: r.find("```")])
-            for r in resp
-        ]
+        [doc["prompt"] + clean_response(r, doc["prompt"]) for r in resp]
         for resp, doc in zip(resps, docs, strict=True)
     ]
